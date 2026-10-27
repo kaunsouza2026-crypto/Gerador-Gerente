@@ -1,47 +1,394 @@
-import os
-from reportlab.lib.pagesizes import A4, landscape
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib import colors
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gerador Gerente - Bradesco Net Empresa</title>
+<style>
+  :root {
+    --bg: #0b0b0e;
+    --panel: #141419;
+    --panel2: #1a1a21;
+    --border: #2a2a33;
+    --border2: #3a3a46;
+    --red: #f0191a;
+    --red-dim: #8b1113;
+    --navy: #102640;
+    --green: #22de5e;
+    --text: #ececef;
+    --muted: #8b8b93;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: "Segoe UI", system-ui, sans-serif;
+    background-image:
+      radial-gradient(900px 420px at 12% -8%, rgba(16,38,64,.55), transparent 60%),
+      radial-gradient(700px 380px at 95% 0%, rgba(240,25,26,.10), transparent 60%);
+    background-attachment: fixed;
+  }
+  header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 13px 22px; background: linear-gradient(180deg, #143055, var(--navy));
+    border-bottom: 3px solid var(--red);
+    box-shadow: 0 6px 24px rgba(0,0,0,.45);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .logo-img {
+    width: 38px; height: 38px; border-radius: 8px; flex: none;
+    object-fit: cover; display: block;
+    box-shadow: 0 2px 10px rgba(0,0,0,.5);
+    background: #fff;
+  }
+  header h1 { font-size: 18px; font-weight: 600; margin: 0; letter-spacing: .2px; }
+  header .tag {
+    margin-left: auto; color: #9fb4cf; font-size: 11.5px;
+    font-family: Consolas, monospace; letter-spacing: .4px;
+    background: rgba(0,0,0,.28); padding: 6px 12px; border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.08);
+  }
 
-# Exemplo de função que gera o PDF no seu app.py:
-def gerar_pdf_bradesco(dados, socios, caminho_saida="bradesco_net_empresa.pdf"):
-    # Cria o documento em paisagem (A4 landscape)
-    doc = SimpleDocTemplate(
-        caminho_saida,
-        pagesize=landscape(A4),
-        rightMargin=30, leftMargin=30, topMargin=30, bottomMargin=30
-    )
-    
-    story = []
-    
-    # --- CABEÇALHO COM A LOGO REAL ---
-    logo_path = "brada.png"  # Certifique-se de que a imagem brada.png está na mesma pasta
-    
-    elementos_cabecalho = []
-    if os.path.exists(logo_path):
-        # Insere a imagem da logo com tamanho proporcional (ex: 38x38 pixels)
-        img_logo = Image(logo_path, width=38, height=38)
-        elementos_cabecalho.append(img_logo)
-    
-    # Título ao lado da logo
-    style_titulo = ParagraphStyle(
-        'TituloHeader',
-        fontName='Helvetica-Bold',
-        fontSize=16,
-        textColor=colors.HexColor('#FFFFFF')
-    )
-    elementos_cabecalho.append(Paragraph("Bradesco Net Empresa", style_titulo))
-    
-    # Tabela do Cabeçalho (Logo + Título)
-    tabela_header = Table([elementos_cabecalho], colWidths=[50, None])
-    tabela_header.setStyle(TableStyle([
-        ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
-        ('BOTTOMPADDING', (0,0), (-1,-1), 10),
-    ]))
-    
-    story.append(tabela_header)
-    
-    # Adicione aqui o restante dos dados do seu relatório (matrícula, ag, conta, tabela de sócios, etc.)
-    
-    doc.build(story)
+  main { max-width: 1100px; margin: 0 auto; padding: 24px 22px 40px; }
+
+  .tabs { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+  .tab {
+    padding: 10px 18px; background: var(--panel); border: 1px solid var(--border);
+    border-radius: 999px; cursor: pointer; color: var(--muted); font-size: 13px;
+    font-weight: 600; letter-spacing: .2px; user-select: none;
+    transition: all .16s ease;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .tab::before {
+    content: ""; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--border2); transition: all .16s ease;
+  }
+  .tab:hover { color: #cfcfd6; border-color: var(--border2); transform: translateY(-1px); }
+  .tab.active {
+    color: #fff; background: linear-gradient(180deg, #23232c, #1b1b22);
+    border-color: var(--red-dim);
+    box-shadow: 0 4px 16px rgba(240,25,26,.16), inset 0 1px 0 rgba(255,255,255,.05);
+  }
+  .tab.active::before { background: var(--red); box-shadow: 0 0 8px rgba(240,25,26,.9); }
+
+  .card {
+    background: linear-gradient(180deg, var(--panel2), var(--panel));
+    border: 1px solid var(--border); border-radius: 14px; padding: 20px;
+    display: none;
+    box-shadow: 0 12px 34px rgba(0,0,0,.35);
+    position: relative; overflow: hidden;
+  }
+  .card.active { display: block; animation: fadeUp .18s ease; }
+  .card::before {
+    content: ""; position: absolute; inset: 0 0 auto 0; height: 2px;
+    background: linear-gradient(90deg, var(--red), transparent 55%);
+    opacity: .8;
+  }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 26px; }
+  @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+
+  .row { margin-bottom: 4px; }
+  label {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 11px; color: var(--muted); margin-bottom: 6px;
+    text-transform: uppercase; letter-spacing: .7px; font-weight: 600;
+  }
+  label::before {
+    content: ""; width: 3px; height: 11px; border-radius: 2px;
+    background: var(--red); opacity: .75; flex: none;
+  }
+  input, select, textarea {
+    width: 100%; padding: 10px 12px; background: #0c0c10; color: var(--text);
+    border: 1px solid var(--border); border-radius: 9px;
+    font-family: Consolas, monospace; font-size: 13.5px;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none; border-color: var(--red); background: #0f0f14;
+    box-shadow: 0 0 0 3px rgba(240,25,26,.16);
+  }
+  .hint { font-size: 12.5px; color: var(--muted); margin: 0 0 14px; line-height: 1.6; }
+  .hint b { color: #d6d6dc; }
+
+  .fgroup {
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 16px 16px; background: rgba(0,0,0,.22);
+    margin-bottom: 14px;
+  }
+  .fgroup > .grid { gap: 12px 24px; }
+  .fg-title {
+    display: flex; align-items: center; gap: 9px;
+    font-size: 11px; font-weight: 700; letter-spacing: 1.2px;
+    text-transform: uppercase; color: #b9b9c2; margin: 0 0 14px;
+    padding-bottom: 10px; border-bottom: 1px dashed var(--border2);
+  }
+  .fg-title::before {
+    content: ""; width: 9px; height: 9px; border-radius: 3px;
+    background: linear-gradient(135deg, var(--red), #7d0e10);
+    box-shadow: 0 0 8px rgba(240,25,26,.5);
+  }
+  .fg-title .fg-sub { margin-left: auto; font-weight: 500; color: var(--muted); letter-spacing: .3px; text-transform: none; }
+
+  table { width: 100%; border-collapse: separate; border-spacing: 0; font-family: Consolas, monospace; font-size: 13px; }
+  th, td { padding: 10px 11px; text-align: left; border-bottom: 1px solid var(--border); }
+  th {
+    color: var(--muted); font-weight: 700; font-size: 11px;
+    text-transform: uppercase; letter-spacing: .8px;
+    background: rgba(0,0,0,.3);
+  }
+  tr.sel td, tbody tr:hover td { background: #22222a; }
+  td input { border: none; background: transparent; padding: 5px 7px; width: 100%; color: var(--text); font-family: Consolas, monospace; font-size: 13px; border-radius: 6px; }
+  td input:focus { outline: 1px solid var(--red); background: #12121a; }
+
+  .btns { display: flex; gap: 10px; margin: 18px 0; flex-wrap: wrap; align-items: center; }
+  button {
+    padding: 11px 20px; border: none; border-radius: 9px; cursor: pointer;
+    font-size: 13.5px; font-weight: 700; letter-spacing: .3px; color: #fff;
+    background: linear-gradient(180deg, #32323d, #24242c);
+    border: 1px solid rgba(255,255,255,.06);
+    transition: all .15s ease;
+  }
+  button:hover { transform: translateY(-1px); filter: brightness(1.12); box-shadow: 0 6px 18px rgba(0,0,0,.35); }
+  button.primary {
+    background: linear-gradient(180deg, #ff2f30, #cf1214);
+    border-color: rgba(255,255,255,.14);
+    box-shadow: 0 6px 20px rgba(240,25,26,.30);
+  }
+  button.ghost { background: transparent; border: 1px solid var(--border2); color: var(--muted); }
+  button.small { padding: 7px 14px; font-size: 12px; border-radius: 8px; }
+
+  .status {
+    margin-top: 16px; padding: 12px 15px; border-radius: 10px; font-size: 13px;
+    background: #11201a; color: var(--green); border: 1px solid #1d3a29;
+    display: none; font-family: Consolas, monospace; word-break: break-all;
+    line-height: 1.6; white-space: pre-line;
+  }
+  .status.err { background: #211315; color: #ff6b6b; border-color: #452023; display: block; }
+  .status.ok { display: block; }
+
+  .preview {
+    margin-top: 20px; background: #000; border: 1px solid var(--border);
+    border-radius: 12px; padding: 22px 24px;
+    font-family: Consolas, "Courier New", monospace; font-size: 12.5px;
+    line-height: 1.6; white-space: pre; overflow-x: auto; color: #fff;
+    box-shadow: 0 14px 40px rgba(0,0,0,.5);
+    position: relative;
+  }
+  .preview .red { color: #ff3b3b; }
+  .preview .green { color: #22de5e; }
+  .preview .gray { color: #9a9a9a; }
+  .preview .right { float: right; }
+
+  .st { font-weight: bold; }
+  .st.verde { color: var(--green); }
+  .st.vermelho { color: #ff3b3b; }
+  .st.amarelo { color: #ffd23f; }
+
+  footer { text-align: center; color: var(--muted); font-size: 12px; padding: 22px; }
+</style>
+</head>
+<body>
+
+<header>
+  <img class="logo-img" id="logo-header" src="https://kaunsouza2026-crypto.github.io/Gerador-Gerente/brada.png" alt="logo">
+  <h1>Bradesco Net Empresa</h1>
+  <span class="tag">#GERADOR GERENTE &nbsp;|&nbsp; PREENCHA E CLIQUE EM GERAR PDF</span>
+</header>
+
+<main>
+  <div class="tabs">
+    <div class="tab active" data-tab="fichas">Fichas (Puxar dados)</div>
+    <div class="tab" data-tab="dados">Dados Principais</div>
+    <div class="tab" data-tab="situacoes">Situacoes / Status</div>
+    <div class="tab" data-tab="socios">Socios</div>
+  </div>
+
+  <section class="card active" id="tab-fichas">
+    <p class="hint">Cole aqui o texto de <b>1, 2 ou 3 fichas</b> para puxar automaticamente.</p>
+    <textarea id="ficha-texto" rows="14" style="width:100%;background:#0c0c10;color:#ececef;border:1px solid var(--border2);border-radius:9px;padding:12px;font-family:Consolas,monospace" placeholder="Cole aqui o texto da(s) ficha(s)..."></textarea>
+    <div class="btns">
+      <button class="primary" id="btn-puxar">PUXAR FICHA(S)</button>
+      <button class="ghost" id="btn-limpar-fichas">Limpar fichas</button>
+    </div>
+    <div class="status" id="ficha-status" style="display:none"></div>
+  </section>
+
+  <div id="fichas-bar" style="display:none;margin:16px 0 12px"></div>
+
+  <section class="card" id="tab-dados">
+    <div class="grid">
+      <div class="row"><label>Matricula</label><input id="matricula" value="749.152-3"></div>
+      <div class="row"><label>Hora</label><input id="hora" placeholder="auto"></div>
+      <div class="row"><label>Agencia (AG)</label><input id="ag" value="0513"></div>
+      <div class="row"><label>Produto</label><input id="produto" value="251"></div>
+      <div class="row"><label>Conta</label><input id="conta" value="431487"></div>
+      <div class="row"><label>Pagina</label><input id="pag" value="001"></div>
+      <div class="row" style="grid-column:1/-1"><label>Nome / Razao Social</label><input id="nome" value="AL CONSULTING CONSULTORIA E NEGOCIOS LTDA"></div>
+      <div class="row"><label>CPF / CNPJ</label><input id="cpf_cnpj" value="31879565000114"></div>
+      <div class="row"><label>CEP</label><input id="cep" value="-"></div>
+      <div class="row" style="display:none"><label>Endereco</label><input id="endereco" value="-"></div>
+      <div class="row" style="display:none"><label>Bairro</label><input id="bairro" value="-"></div>
+      <div class="row"><label>UF</label><input id="uf" value="MG"></div>
+      <div class="row" style="grid-column:1/-1"><label>Cidade</label><input id="cidade" value="BELO HORIZONTE"></div>
+      <div class="row"><label>Usuario</label><input id="usuario" value="PAPDB00001"></div>
+      <div class="row"><label>Celular</label><input id="celular" value="31984934272"></div>
+      <div class="row" style="grid-column:1/-1"><label>Email</label><input id="email" value="FINANCEIRO@ANDRADELEMES.COM"></div>
+      <div class="row"><label>Data Ultima Atualizacao</label><input id="data_atualizacao" value="****"></div>
+      <div class="row"><label>Cons Efetuada</label><input id="cons_efetuada" value="_"></div>
+      <div class="row"><label>Topo esquerdo</label><input id="confidencial" value="#CONFIDENCIAL"></div>
+      <div class="row"><label>Topo direito</label><input id="sistema" value="#SISTEMA INTERNO"></div>
+      <div class="row" style="grid-column:1/-1"><label>Rodape (F-keys)</label><input id="fkeys" value="F01 - AJUDA          F03 - RETORNAR        F04 - MENU          F05 - DETALHE"></div>
+    </div>
+  </section>
+
+  <section class="card" id="tab-situacoes">
+    <div class="grid">
+      <div class="row"><label>SITUACAO</label><input id="situacao" value="ATIVA"></div>
+      <div class="row"><label>SITUACAO CADASTRAL</label><input id="situacao_cadastral" value="PENDENTE"></div>
+      <div class="row"><label>MODULO TOPAZ</label><input id="modulo_topaz" value="INATIVO"></div>
+      <div class="row"><label>CERTIFICADO DIGITAL</label><input id="certificado" value="EXPIRADO"></div>
+    </div>
+  </section>
+
+  <section class="card" id="tab-socios">
+    <div class="btns" style="margin-top:0">
+      <button class="small" id="btn-add">+ Adicionar</button>
+      <button class="small ghost" id="btn-del">- Remover</button>
+    </div>
+    <table>
+      <thead><tr><th style="width:40px">N</th><th>CARGO</th><th>NOME</th><th>CONTATO</th></tr></thead>
+      <tbody id="socios-body"></tbody>
+    </table>
+  </section>
+
+  <div class="fgroup" style="margin:14px 0">
+    <div class="fg-title">Logo atual (GitHub)</div>
+    <div class="btns" style="margin:0;align-items:center">
+      <img id="logo-preview" src="https://kaunsouza2026-crypto.github.io/Gerador-Gerente/brada.png" alt="logo" style="width:44px;height:44px;border-radius:8px;object-fit:cover;border:1px solid var(--border2);background:#fff">
+      <span style="font-size:12px;color:var(--muted);font-family:Consolas,monospace">Puxando direto do GitHub Pages</span>
+    </div>
+  </div>
+
+  <div class="btns">
+    <button class="primary" id="btn-gerar">GERAR PDF</button>
+    <button class="ghost" id="btn-reset">Restaurar exemplo</button>
+  </div>
+
+  <div class="status" id="status"></div>
+
+  <div class="preview" id="preview"></div>
+</main>
+
+<footer>Gerador Gerente &mdash; site local</footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const timestamp = new Date().getTime();
+  const urlLogo = "https://kaunsouza2026-crypto.github.io/Gerador-Gerente/brada.png?v=" + timestamp;
+  const logoHeader = document.getElementById("logo-header");
+  const logoPreview = document.getElementById("logo-preview");
+  if (logoHeader) logoHeader.src = urlLogo;
+  if (logoPreview) logoPreview.src = urlLogo;
+});
+
+const CAMPOS = [
+  "matricula","hora","ag","produto","conta","pag","nome","cpf_cnpj","endereco","cep",
+  "bairro","uf","cidade","usuario","celular","email","data_atualizacao","cons_efetuada",
+  "confidencial","sistema","fkeys","situacao","situacao_cadastral","modulo_topaz","certificado"
+];
+const API = "http://127.0.0.1:8765";
+let socios = [{ cargo: "ADMINISTRADOR", nome: "RAFAEL ANDRADE LEMES", cpf: "06493570603", contato: "31984934272" }];
+let selIdx = -1;
+const $ = id => document.getElementById(id);
+
+function tabsInit() {
+  document.querySelectorAll(".tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".card").forEach(c => c.classList.remove("active"));
+      tab.classList.add("active");
+      $("tab-" + tab.dataset.tab).classList.add("active");
+    });
+  });
+}
+
+function renderSocios() {
+  const tb = $("socios-body");
+  tb.innerHTML = "";
+  socios.forEach((s, i) => {
+    const tr = document.createElement("tr");
+    if (i === selIdx) tr.classList.add("sel");
+    tr.innerHTML = `<td>${i + 1}</td><td><input data-i="${i}" data-k="cargo" value="${s.cargo}"></td><td><input data-i="${i}" data-k="nome" value="${s.nome}"></td><td><input data-i="${i}" data-k="contato" value="${s.contato}"></td>`;
+    tb.appendChild(tr);
+  });
+  tb.querySelectorAll("input").forEach(inp => {
+    inp.addEventListener("input", e => {
+      socios[+e.target.dataset.i][e.target.dataset.k] = e.target.value;
+      atualizarPreview();
+    });
+  });
+}
+
+function coletar() {
+  const dados = {};
+  CAMPOS.forEach(k => dados[k] = ($(k) ? $(k).value : "").trim());
+  return { dados, socios: socios.map(s => ({...s})), logo: "https://kaunsouza2026-crypto.github.io/Gerador-Gerente/brada.png" };
+}
+
+function atualizarPreview() {
+  const { dados: d, socios: soc } = coletar();
+  const hora = d.hora || new Date().toTimeString().slice(0, 5);
+  let html = "";
+  html += `MATRÍCULA: ${d.matricula}    <span class="right">${hora}</span>\n`;
+  html += `${d.confidencial}    <span class="right">${d.sistema}</span>\n`;
+  html += "-".repeat(116) + "\n";
+  html += `AG: ${d.ag}        PRODUTO: ${d.produto}        CONTA: ${d.conta}    <span class="right">PAG: ${d.pag}</span>\n`;
+  html += `NOME: ${d.nome}    <span class="right">CPF/CNPJ: ${d.cpf_cnpj}</span>\n\n`;
+  html += `ENDEREÇO: ${d.endereco}\n`;
+  html += `CEP: ${d.cep}    BAIRRO: ${d.bairro}\n`;
+  html += `UF: ${d.uf}    CIDADE: ${d.cidade}\n`;
+  html += `SITUAÇÃO: <span class="st verde">${d.situacao}</span>   SITUAÇÃO CADASTRAL: <span class="st vermelho">${d.situacao_cadastral}</span>\n`;
+  html += `USUARIO: ${d.usuario}\nCELULAR: ${d.celular}\nEMAIL: ${d.email}\n`;
+  html += "-".repeat(116) + "\n\n";
+  html += `N   CARGO             NOME                               CONTATO\n`;
+  soc.forEach((s, i) => {
+    html += `${i + 1}   ${s.cargo.padEnd(17)} ${s.nome.padEnd(35)} ${s.contato}\n`;
+  });
+  html += `\nCONS EFETUADA ${d.cons_efetuada}\n`;
+  html += "-".repeat(116) + "\n\n${d.fkeys}\n";
+  $("preview").innerHTML = html;
+}
+
+async function gerar() {
+  const payload = coletar();
+  document.getElementById("status").style.display = "block";
+  document.getElementById("status").textContent = "Gerando PDF...";
+  try {
+    const resp = await fetch(API + "/api/gerar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    if (!resp.ok) throw new Error("Erro ao gerar PDF");
+    const blob = await resp.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "bradesco_net_empresa.pdf";
+    document.body.appendChild(a); a.click(); a.remove();
+    document.getElementById("status").textContent = "PDF gerado com sucesso!";
+  } catch (e) {
+    document.getElementById("status").className = "status err";
+    document.getElementById("status").textContent = "Erro: " + e.message;
+  }
+}
+
+tabsInit();
+renderSocios();
+atualizarPreview();
+document.querySelectorAll("input").forEach(i => i.addEventListener("input", atualizarPreview));
+$("btn-gerar").addEventListener("click", gerar);
+$("btn-add").addEventListener("click", () => { socios.push({ cargo: "ADMINISTRADOR", nome: "", contato: "" }); renderSocios(); atualizarPreview(); });
+$("btn-del").addEventListener("click", () => { if (socios.length > 0) socios.pop(); renderSocios(); atualizarPreview(); });
+</script>
+</body>
+</html>
