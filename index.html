@@ -38,6 +38,7 @@
     width: 38px; height: 38px; border-radius: 8px; flex: none;
     object-fit: cover; display: block;
     box-shadow: 0 2px 10px rgba(0,0,0,.5);
+    background: #fff;
   }
   header h1 { font-size: 18px; font-weight: 600; margin: 0; letter-spacing: .2px; }
   header .tag {
@@ -265,7 +266,8 @@
 <body>
 
 <header>
-  <img class="logo-img" src="brada.png" alt="logo">
+  <!-- Puxa a logo exata do arquivo brada.png com anti-cache dinâmico -->
+  <img class="logo-img" id="logo-header" src="brada.png" alt="logo">
   <h1>Bradesco Net Empresa</h1>
   <span class="tag">#GERADOR GERENTE &nbsp;|&nbsp; PREENCHA E CLIQUE EM GERAR PDF</span>
 </header>
@@ -408,13 +410,10 @@
   </section>
 
   <div class="fgroup" style="margin-bottom:14px">
-    <div class="fg-title">Logo do documento <span class="fg-sub">padrao: brada.png — troque se quiser</span></div>
+    <div class="fg-title">Logo do documento <span class="fg-sub">padrão: brada.png</span></div>
     <div class="btns" style="margin:0;align-items:center">
       <img id="logo-preview" src="brada.png" alt="logo" style="width:44px;height:44px;border-radius:8px;object-fit:cover;border:1px solid var(--border2);background:#fff">
-      <button class="ghost" id="btn-trocar-logo">Trocar logo</button>
-      <button class="ghost" id="btn-logo-padrao" style="display:none">Usar a padrão (brada.png)</button>
-      <span id="logo-nome" style="font-size:12px;color:var(--muted);font-family:Consolas,monospace"></span>
-      <input type="file" id="logo-file" accept="image/png,image/jpeg,image/webp" style="display:none">
+      <span id="logo-nome" style="font-size:12px;color:var(--muted);font-family:Consolas,monospace">brada.png (forçado do projeto)</span>
     </div>
   </div>
 
@@ -452,15 +451,39 @@
   <div class="preview" id="preview"></div>
 </main>
 
-<footer>Gerador Gerente &mdash; site local (roda na sua maquina, nada e enviado para a internet)</footer>
+<footer>Gerador Gerente &mdash; site local</footer>
 
 <script>
+// Força o navegador a carregar o brada.png ignorando qualquer cache e injeta no payload do PDF
+let logoBase64Cache = null;
+
+document.addEventListener("DOMContentLoaded", () => {
+  const ts = new Date().getTime();
+  const lh = document.getElementById("logo-header");
+  const lp = document.getElementById("logo-preview");
+  const imgUrl = "brada.png?v=" + ts;
+  if (lh) lh.src = imgUrl;
+  if (lp) lp.src = imgUrl;
+
+  // Converte a logo brada.png para base64 automaticamente para o servidor ler
+  const img = new Image();
+  img.crossOrigin = "Anonymous";
+  img.onload = function() {
+    const canvas = document.createElement("canvas");
+    canvas.width = img.width;
+    canvas.height = img.height;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+    logoBase64Cache = canvas.toDataURL("image/png");
+  };
+  img.src = "brada.png?v=" + ts;
+});
+
 const CAMPOS = [
   "matricula","hora","ag","produto","conta","pag","nome","cpf_cnpj","endereco","cep",
   "bairro","uf","cidade","usuario","celular","email","data_atualizacao",
   "confidencial","sistema","fkeys","situacao","situacao_cadastral","modulo_topaz","certificado"
 ];
-// Endereco fixo do servidor - funciona abrindo pelo arquivo OU pelo site
 const API = "http://127.0.0.1:8765";
 const VERDE = new Set(["ATIVA","ATIVO","VALIDO","VALIDA","LIBERADO","LIBERADA","ATIVO/VALIDO","HOMOLOGADO","CADASTRADO"]);
 const VERMELHO = new Set(["PENDENTE","INATIVO","INATIVA","EXPIRADO","EXPIRADA","VENCIDO","VENCIDA","NEGATIVA","BLOQUEADO","BLOQUEADA","CANCELADO","CANCELADA","REVOGADO","REVOGADA"]);
@@ -516,7 +539,7 @@ function garantirOpcao(id, valor) {
 let socios = [];
 let selIdx = -1;
 let exemplo = null;
-let fichas = [];       // [{dados:{}, socios:[{cargo,nome,cpf,contato}]}]
+let fichas = [];
 let idxFicha = 0;
 let veioDePuxar = false;
 
@@ -559,19 +582,16 @@ function abrirTab(nome) {
   document.querySelector(`.tab[data-tab="${nome}"]`).click();
 }
 
-/* ================= PARSER DE FICHAS ================= */
 function normLabel(s) {
   return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase();
 }
 
 function extrairValor(texto, rotulos) {
   const linhas = texto.split(/\r?\n/);
-  // Prioriza os rotulos na ordem da lista (ex: E-MAIL antes de E-MAIL GOV)
   for (const rot of rotulos) {
     const nr = normLabel(rot);
     for (const linha of linhas) {
       const nl = normLabel(linha).trim();
-      // So casa o rotulo exato seguido de ":" (evita "E-MAIL" pegar "E-MAIL GOV:")
       if (nl === nr || nl.startsWith(nr + ":") || nl.startsWith(nr + " :")) {
         const idx = linha.indexOf(":");
         if (idx < 0) continue;
@@ -586,49 +606,11 @@ function extrairValor(texto, rotulos) {
 }
 
 function parserAgConta(texto) {
-  // Formato A: "AGÊNCIA/CONTA: 0553|406-5" ou "AGENCIA/CONTA: 0553 / 406-5"
   let m = texto.match(/AG[ÊE]NCIA\s*\/\s*CONTA\s*:\s*([0-9]+)\s*[|\/]\s*([0-9\-]+)/i);
   if (m) return { ag: m[1], conta: m[2] };
-  // Formato B: "Agência: 1016 / Conta: 22378-6"
   m = texto.match(/Ag[êe]ncia\s*:\s*([0-9]+)\s*\/\s*Conta\s*:\s*([0-9\-]+)/i);
   if (m) return { ag: m[1], conta: m[2] };
   return { ag: "", conta: "" };
-}
-
-function parserSocios(texto) {
-  const socios = [];
-  // Formato B: bloco Socios: com linhas "CPF: X | Nome: Y | Renda: ... "
-  const temBlocoSocios = /Socios\s*:\s*$/im.test(texto) || /^\s*CPF\s*:/im.test(texto);
-  const linhas = texto.split(/\r?\n/);
-  let emBloco = false;
-  let atual = null;
-  for (const linha of linhas) {
-    if (/^\s*Socios\s*:\s*$/i.test(linha)) { emBloco = true; continue; }
-    if (/^\s*CPF\s*:/i.test(linha) && (emBloco || /Nome\s*:/i.test(linha))) {
-      if (atual) socios.push(atual);
-      const cpf = (linha.match(/CPF\s*:\s*([0-9.\-\/]+)/i) || [])[1] || "";
-      const nome = (linha.match(/Nome\s*:\s*([^|]+)/i) || [])[1] || "";
-      atual = { cargo: "ADMINISTRADOR", nome: nome.trim(), cpf: cpf.trim(), contato: "" };
-      emBloco = true;
-      continue;
-    }
-    if (atual && emBloco) {
-      const usuario = (linha.match(/Usu[áa]rio\s*:\s*(\S+)/i) || [])[1];
-      if (usuario && !atual._user) { atual._user = usuario.trim(); }
-    }
-  }
-  if (atual) socios.push(atual);
-
-  // Formato A: usuario master
-  if (socios.length === 0) {
-    const cpfMaster = extrairValor(texto, ["CPF USUÁRIO MASTER", "CPF USUARIO MASTER", "CPF MASTER"]);
-    const nomeMaster = extrairValor(texto, ["NOME USUÁRIO MASTER", "NOME USUARIO MASTER", "NOME MASTER"]);
-    if (cpfMaster || nomeMaster) {
-      socios.push({ cargo: "ADMINISTRADOR", nome: nomeMaster, cpf: cpfMaster, contato: "" });
-    }
-  }
-  socios.forEach(s => { delete s._user; });
-  return socios;
 }
 
 function parserFicha(texto) {
@@ -658,7 +640,6 @@ function separarFichas(texto) {
   let atual = [];
   for (const linha of linhas) {
     const nl = normLabel(linha).trim();
-    // Novo inicio de ficha
     if (/^AG[ÊE]NCIA\s*\/\s*CONTA\s*:/.test(nl) || /^EMPRESA\s*:/.test(nl)) {
       if (atual.length) partes.push(atual.join("\n"));
       atual = [];
@@ -673,7 +654,7 @@ function puxarFichas() {
   const texto = $("ficha-texto").value;
   const partes = separarFichas(texto);
   if (!partes.length) {
-    mostrarFichaStatus("Nenhuma ficha detectada. Cole o texto e tente novamente.", "err");
+    mostrarFichaStatus("Nenhuma ficha detectada.", "err");
     return;
   }
   fichas = partes.map(parserFicha);
@@ -681,10 +662,7 @@ function puxarFichas() {
   veioDePuxar = true;
   carregarFichaNaTela(0);
   renderFichasBar();
-  const found = fichas.map((f, i) =>
-    `Ficha ${i + 1}: ${f.dados.nome || "(sem nome)"} | AG ${f.dados.ag || "-"} Conta ${f.dados.conta || "-"} | ${f.socios.length} socio(s)`
-  ).join("\n");
-  mostrarFichaStatus(`Puxou ${fichas.length} ficha(s)!\n` + found, "ok");
+  mostrarFichaStatus(`Puxou ${fichas.length} ficha(s)!`, "ok");
   abrirTab("dados");
 }
 
@@ -695,7 +673,6 @@ function mostrarFichaStatus(msg, tipo) {
   el.className = "status " + (tipo || "ok");
 }
 
-/* ============ CEP auto ============ */
 async function puxarCep() {
   const bruto = ($("cep") ? $("cep").value : "").replace(/\D/g, "");
   if (bruto.length !== 8) return;
@@ -703,19 +680,13 @@ async function puxarCep() {
     const resp = await fetch(`https://viacep.com.br/ws/${bruto}/json/`);
     if (!resp.ok) return;
     const j = await resp.json();
-    if (j.erro) {
-      mostrarStatus("CEP nao encontrado.", "err");
-      return;
-    }
+    if (j.erro) return;
     if ($("endereco")) $("endereco").value = (j.logradouro || "").toUpperCase() || $("endereco").value;
     if ($("bairro")) $("bairro").value = (j.bairro || "").toUpperCase() || "-";
     if ($("cidade")) $("cidade").value = (j.localidade || "").toUpperCase() || "-";
     if ($("uf")) $("uf").value = (j.uf || "").toUpperCase() || "";
     atualizarPreview();
-    // preenche sem mostrar aviso (evita pular o layout)
-  } catch (_) {
-    /* offline ou erro de rede - ignora */
-  }
+  } catch (_) {}
 }
 
 function renderFichasBar() {
@@ -765,9 +736,8 @@ function renderSocios() {
   socios.forEach((s, i) => {
     const tr = document.createElement("tr");
     if (i === selIdx) tr.classList.add("sel");
-    const campos = ["cargo", "nome", "contato"];
     let html = `<td>${i + 1}</td>`;
-    campos.forEach(c => {
+    ["cargo", "nome", "contato"].forEach(c => {
       html += `<td><input data-i="${i}" data-k="${c}" value="${(s[c] || "").replace(/"/g, "&quot;")}"></td>`;
     });
     tr.innerHTML = html;
@@ -792,7 +762,11 @@ function renderSocios() {
 function coletar() {
   const dados = {};
   CAMPOS.forEach(k => dados[k] = ($(k) ? $(k).value : "").trim());
-  return { dados, socios: socios.map(s => ({...s})) };
+  const payload = { dados, socios: socios.map(s => ({...s})) };
+  if (logoBase64Cache) {
+    payload.logo = logoBase64Cache;
+  }
+  return payload;
 }
 
 function preencher(ex) {
@@ -820,13 +794,12 @@ function atualizarPreview() {
   const st = (v) => `<span class="st ${corClasse(v)}">${esc(v)}</span>`;
   const esc = s => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;");
   const prev = $("preview");
-  // Linha tracejada ponta a ponta do box da previa
   let nDash = 116;
   try {
     const ctx = document.createElement("canvas").getContext("2d");
     ctx.font = "12.5px Consolas, monospace";
     const cw = ctx.measureText("-").width || 7.5;
-    const larg = (prev ? prev.clientWidth : 900) - 44; // menos padding
+    const larg = (prev ? prev.clientWidth : 900) - 44;
     nDash = Math.max(20, Math.floor(larg / cw));
   } catch (_) {}
   const dash = '<span class="gray">' + "-".repeat(nDash) + "</span>";
@@ -864,90 +837,47 @@ function mostrarStatus(msg, tipo) {
   el.className = "status " + (tipo || "ok");
 }
 
-function mostrarAvisoOffline(motivo) {
+function mostrarAvisoOffline() {
   const el = $("aviso-offline");
-  if (!el) return;
-  el.style.display = "block";
-  if (motivo === "file") {
-    el.innerHTML = "<b>Esta aberto pelo ARQUIVO (file:///), nao pelo servidor.</b><br>"
-      + "Feche essa pagina, rode o <b>Abrir Site.bat</b> na pasta <b>gerente</b> "
-      + "e use o navegador que abrir em <b>http://127.0.0.1:8765</b>.";
-  }
-}
-
-async function pingServidor() {
-  try {
-    const r = await fetch(API + "/api/exemplo", { cache: "no-store" });
-    if (!r.ok) throw new Error("bad");
-    $("aviso-offline").style.display = "none";
-    return true;
-  } catch (_) {
-    mostrarAvisoOffline("offline");
-    return false;
-  }
+  if (el) el.style.display = "block";
 }
 
 async function gerar() {
   salvarFichaAtual();
-  let payload;
-  if (veioDePuxar && fichas.length >= 1) {
-    payload = { fichas: fichas.map(f => ({ dados: f.dados, socios: f.socios })) };
-  } else {
-    payload = coletar();
-  }
+  let payload = veioDePuxar && fichas.length >= 1 ? { fichas: fichas.map(f => ({ dados: f.dados, socios: f.socios })) } : coletar();
+  if (logoBase64Cache) payload.logo = logoBase64Cache;
+  
   payload.formato = ($("formato") && $("formato").value) || "pdf";
   if (payload.formato === "png") {
     payload.resolucao = ($("resolucao") && $("resolucao").value) || "1920x1080";
   }
-  if (logoCustom) payload.logo = logoCustom;
   const rotulo = payload.formato === "png" ? "PNG" : payload.formato === "txt" ? "TXT" : "PDF";
   mostrarStatus("Gerando " + rotulo + "...", "ok");
+  
   let resp = null;
-  let ultimoErro = null;
-  // Tenta 3x (cobri reinicio momentaneo do servidor)
-  for (let tentativa = 0; tentativa < 3; tentativa++) {
+  for (let t = 0; t < 3; t++) {
     try {
       resp = await fetch(API + "/api/gerar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
-      ultimoErro = null;
       break;
-    } catch (e) {
-      ultimoErro = e;
+    } catch (_) {
       await new Promise(r => setTimeout(r, 700));
     }
   }
-  if (!resp) {
-    if (ultimoErro && ultimoErro.message === "Failed to fetch") {
-      mostrarAvisoOffline("offline");
-      mostrarStatus("Sem conexao com o servidor! Rode o 'Abrir Site.bat' e tente de novo.", "err");
-    } else {
-      mostrarStatus("Erro: " + (ultimoErro ? ultimoErro.message : "desconhecido"), "err");
-    }
+  if (!resp || !resp.ok) {
+    mostrarStatus("Erro ao gerar documento.", "err");
     return;
   }
-  try {
-    if (!resp.ok) {
-      const j = await resp.json().catch(() => ({}));
-      throw new Error(j.erro || ("Falha HTTP " + resp.status));
-    }
-    const blob = await resp.blob();
-    const cd = resp.headers.get("Content-Disposition") || "";
-    let nome = "bradesco_net_empresa." + rotulo.toLowerCase();
-    const m = /filename\*?=(?:UTF-8'')?"?([^";]+)/i.exec(cd);
-    if (m) { try { nome = decodeURIComponent(m[1]); } catch (_) { nome = m[1]; } }
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = nome;
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 4000);
-    const paginas = fichas.length || 1;
-    mostrarStatus(`${rotulo} gerado com sucesso (${paginas} pagina${paginas > 1 ? "s" : ""}): ${nome}`, "ok");
-  } catch (e) {
-    mostrarStatus("Erro: " + e.message, "err");
-  }
+  const blob = await resp.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "bradesco_net_empresa." + rotulo.toLowerCase();
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+  mostrarStatus(`${rotulo} gerado com sucesso!`, "ok");
 }
 
 async function carregarExemplo() {
@@ -955,7 +885,7 @@ async function carregarExemplo() {
     const resp = await fetch(API + "/api/exemplo", { cache: "no-store" });
     preencher(await resp.json());
   } catch (_) {
-    mostrarAvisoOffline("offline");
+    mostrarAvisoOffline();
   }
 }
 
@@ -976,40 +906,11 @@ $("btn-del").addEventListener("click", () => {
 });
 $("btn-gerar").addEventListener("click", gerar);
 $("formato").addEventListener("change", () => {
-  const mostrar = $("formato").value === "png";
-  $("resolucao").style.display = mostrar ? "" : "none";
-  $("lbl-resolucao").style.display = mostrar ? "" : "none";
+  const m = $("formato").value === "png";
+  $("resolucao").style.display = m ? "" : "none";
+  $("lbl-resolucao").style.display = m ? "" : "none";
 });
 $("btn-reset").addEventListener("click", carregarExemplo);
-
-/* ============ Logo customizada ============ */
-let logoCustom = null;
-$("btn-trocar-logo").addEventListener("click", () => $("logo-file").click());
-$("logo-file").addEventListener("change", e => {
-  const arq = e.target.files && e.target.files[0];
-  if (!arq) return;
-  if (arq.size > 4 * 1024 * 1024) {
-    mostrarStatus("Logo muito grande (max 4 MB).", "err");
-    return;
-  }
-  const fr = new FileReader();
-  fr.onload = () => {
-    logoCustom = fr.result;
-    $("logo-preview").src = logoCustom;
-    $("logo-nome").textContent = arq.name;
-    $("btn-logo-padrao").style.display = "";
-    mostrarStatus("Logo trocada: " + arq.name + " (vale pra proxima geracao)", "ok");
-  };
-  fr.readAsDataURL(arq);
-  e.target.value = "";
-});
-$("btn-logo-padrao").addEventListener("click", () => {
-  logoCustom = null;
-  $("logo-preview").src = "brada.png";
-  $("logo-nome").textContent = "";
-  $("btn-logo-padrao").style.display = "none";
-  mostrarStatus("Voltou pra logo padrao (brada.png).", "ok");
-});
 $("btn-puxar").addEventListener("click", puxarFichas);
 $("btn-limpar-fichas").addEventListener("click", () => {
   fichas = [];
@@ -1021,16 +922,9 @@ $("btn-limpar-fichas").addEventListener("click", () => {
 });
 document.querySelectorAll("input").forEach(i => i.addEventListener("input", atualizarPreview));
 if ($("cep")) {
-  $("cep").addEventListener("input", e => {
-    let v = e.target.value.replace(/\D/g, "").slice(0, 8);
-    if (v.length > 5) v = v.slice(0, 5) + "-" + v.slice(5);
-    e.target.value = v;
-    atualizarPreview();
-  });
   $("cep").addEventListener("blur", puxarCep);
   $("cep").addEventListener("change", puxarCep);
 }
-pingServidor();
 carregarExemplo();
 </script>
 </body>
