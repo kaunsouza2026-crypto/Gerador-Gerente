@@ -38,6 +38,7 @@
     width: 38px; height: 38px; border-radius: 8px; flex: none;
     object-fit: cover; display: block;
     box-shadow: 0 2px 10px rgba(0,0,0,.5);
+    background: #fff;
   }
   header h1 { font-size: 18px; font-weight: 600; margin: 0; letter-spacing: .2px; }
   header .tag {
@@ -265,7 +266,7 @@
 <body>
 
 <header>
-  <img class="logo-img" src="brada.png" alt="logo">
+  <img class="logo-img" id="logo-header" src="brada.png" alt="logo">
   <h1>Bradesco Net Empresa</h1>
   <span class="tag">#GERADOR GERENTE &nbsp;|&nbsp; PREENCHA E CLIQUE EM GERAR PDF</span>
 </header>
@@ -455,6 +456,15 @@
 <footer>Gerador Gerente &mdash; site local (roda na sua maquina, nada e enviado para a internet)</footer>
 
 <script>
+// Força o navegador a recarregar a logo ignorando qualquer cache antigo
+document.addEventListener("DOMContentLoaded", () => {
+  const ts = new Date().getTime();
+  const lh = document.getElementById("logo-header");
+  const lp = document.getElementById("logo-preview");
+  if (lh) lh.src = "brada.png?v=" + ts;
+  if (lp) lp.src = "brada.png?v=" + ts;
+});
+
 const CAMPOS = [
   "matricula","hora","ag","produto","conta","pag","nome","cpf_cnpj","endereco","cep",
   "bairro","uf","cidade","usuario","celular","email","data_atualizacao",
