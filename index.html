@@ -29,10 +29,16 @@
   }
   header {
     display: flex; align-items: center; gap: 14px;
-    padding: 15px 22px; background: linear-gradient(180deg, #143055, var(--navy));
+    padding: 13px 22px; background: linear-gradient(180deg, #143055, var(--navy));
     border-bottom: 3px solid var(--red);
     box-shadow: 0 6px 24px rgba(0,0,0,.45);
     position: sticky; top: 0; z-index: 10;
+  }
+  .logo-img {
+    width: 38px; height: 38px; border-radius: 8px; flex: none;
+    object-fit: cover; display: block;
+    box-shadow: 0 2px 10px rgba(0,0,0,.5);
+    background: #fff;
   }
   header h1 { font-size: 18px; font-weight: 600; margin: 0; letter-spacing: .2px; }
   header .tag {
@@ -260,7 +266,8 @@
 <body>
 
 <header>
-  <!-- LOGO REMOVIDA COMPLETAMENTE DO CABEÇALHO -->
+  <!-- Puxa a logo exata do arquivo brada.png com anti-cache dinâmico -->
+  <img class="logo-img" id="logo-header" src="brada.png" alt="logo">
   <h1>Bradesco Net Empresa</h1>
   <span class="tag">#GERADOR GERENTE &nbsp;|&nbsp; PREENCHA E CLIQUE EM GERAR PDF</span>
 </header>
@@ -402,6 +409,14 @@
     </table>
   </section>
 
+  <div class="fgroup" style="margin-bottom:14px">
+    <div class="fg-title">Logo do documento <span class="fg-sub">padrão: brada.png</span></div>
+    <div class="btns" style="margin:0;align-items:center">
+      <img id="logo-preview" src="brada.png" alt="logo" style="width:44px;height:44px;border-radius:8px;object-fit:cover;border:1px solid var(--border2);background:#fff">
+      <span id="logo-nome" style="font-size:12px;color:var(--muted);font-family:Consolas,monospace">brada.png (forçado do projeto)</span>
+    </div>
+  </div>
+
   <div class="btns">
     <label for="formato" class="op-label">Formato de saída:</label>
     <select id="formato" class="op-sel">
@@ -436,15 +451,39 @@
   <div class="preview" id="preview"></div>
 </main>
 
-<footer>Gerador Gerente &mdash; site local (roda na sua maquina, nada e enviado para a internet)</footer>
+<footer>Gerador Gerente &mdash; site local</footer>
 
 <script>
+// Força o navegador a carregar o brada.png ignorando qualquer cache e injeta no payload do PDF
+let logoBase64Cache = null;
+
+document.addEventListener("DOMContentLoaded", () => {
+  const ts = new Date().getTime();
+  const lh = document.getElementById("logo-header");
+  const lp = document.getElementById("logo-preview");
+  const imgUrl = "brada.png?v=" + ts;
+  if (lh) lh.src = imgUrl;
+  if (lp) lp.src = imgUrl;
+
+  // Converte a logo brada.png para base64 automaticamente para o servidor ler
+  const img = new Image();
+  img.crossOrigin = "Anonymous";
+  img.onload = function() {
+    const canvas = document.createElement("canvas");
+    canvas.width = img.width;
+    canvas.height = img.height;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+    logoBase64Cache = canvas.toDataURL("image/png");
+  };
+  img.src = "brada.png?v=" + ts;
+});
+
 const CAMPOS = [
   "matricula","hora","ag","produto","conta","pag","nome","cpf_cnpj","endereco","cep",
   "bairro","uf","cidade","usuario","celular","email","data_atualizacao",
   "confidencial","sistema","fkeys","situacao","situacao_cadastral","modulo_topaz","certificado"
 ];
-// Endereco fixo do servidor - funciona abrindo pelo arquivo OU pelo site
 const API = "http://127.0.0.1:8765";
 const VERDE = new Set(["ATIVA","ATIVO","VALIDO","VALIDA","LIBERADO","LIBERADA","ATIVO/VALIDO","HOMOLOGADO","CADASTRADO"]);
 const VERMELHO = new Set(["PENDENTE","INATIVO","INATIVA","EXPIRADO","EXPIRADA","VENCIDO","VENCIDA","NEGATIVA","BLOQUEADO","BLOQUEADA","CANCELADO","CANCELADA","REVOGADO","REVOGADA"]);
@@ -500,7 +539,7 @@ function garantirOpcao(id, valor) {
 let socios = [];
 let selIdx = -1;
 let exemplo = null;
-let fichas = [];       // [{dados:{}, socios:[{cargo,nome,cpf,contato}]}]
+let fichas = [];
 let idxFicha = 0;
 let veioDePuxar = false;
 
@@ -543,7 +582,6 @@ function abrirTab(nome) {
   document.querySelector(`.tab[data-tab="${nome}"]`).click();
 }
 
-/* ================= PARSER DE FICHAS ================= */
 function normLabel(s) {
   return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase();
 }
@@ -573,33 +611,6 @@ function parserAgConta(texto) {
   m = texto.match(/Ag[êe]ncia\s*:\s*([0-9]+)\s*\/\s*Conta\s*:\s*([0-9\-]+)/i);
   if (m) return { ag: m[1], conta: m[2] };
   return { ag: "", conta: "" };
-}
-
-function parserSocios(texto) {
-  const socios = [];
-  const linhas = texto.split(/\r?\n/);
-  let emBloco = false;
-  let atual = null;
-  for (const linha of linhas) {
-    if (/^\s*Socios\s*:\s*$/i.test(linha)) { emBloco = true; continue; }
-    if (/^\s*CPF\s*:/i.test(linha) && (emBloco || /Nome\s*:/i.test(linha))) {
-      if (atual) socios.push(atual);
-      const cpf = (linha.match(/CPF\s*:\s*([0-9.\-\/]+)/i) || [])[1] || "";
-      const nome = (linha.match(/Nome\s*:\s*([^|]+)/i) || [])[1] || "";
-      atual = { cargo: "ADMINISTRADOR", nome: nome.trim(), cpf: cpf.trim(), contato: "" };
-      emBloco = true;
-      continue;
-    }
-  }
-  if (atual) socios.push(atual);
-  if (socios.length === 0) {
-    const cpfMaster = extrairValor(texto, ["CPF USUÁRIO MASTER", "CPF USUARIO MASTER", "CPF MASTER"]);
-    const nomeMaster = extrairValor(texto, ["NOME USUÁRIO MASTER", "NOME USUARIO MASTER", "NOME MASTER"]);
-    if (cpfMaster || nomeMaster) {
-      socios.push({ cargo: "ADMINISTRADOR", nome: nomeMaster, cpf: cpfMaster, contato: "" });
-    }
-  }
-  return socios;
 }
 
 function parserFicha(texto) {
@@ -643,7 +654,7 @@ function puxarFichas() {
   const texto = $("ficha-texto").value;
   const partes = separarFichas(texto);
   if (!partes.length) {
-    mostrarFichaStatus("Nenhuma ficha detectada. Cole o texto e tente novamente.", "err");
+    mostrarFichaStatus("Nenhuma ficha detectada.", "err");
     return;
   }
   fichas = partes.map(parserFicha);
@@ -751,7 +762,11 @@ function renderSocios() {
 function coletar() {
   const dados = {};
   CAMPOS.forEach(k => dados[k] = ($(k) ? $(k).value : "").trim());
-  return { dados, socios: socios.map(s => ({...s})) };
+  const payload = { dados, socios: socios.map(s => ({...s})) };
+  if (logoBase64Cache) {
+    payload.logo = logoBase64Cache;
+  }
+  return payload;
 }
 
 function preencher(ex) {
@@ -822,33 +837,23 @@ function mostrarStatus(msg, tipo) {
   el.className = "status " + (tipo || "ok");
 }
 
-function mostrarAvisoOffline(motivo) {
+function mostrarAvisoOffline() {
   const el = $("aviso-offline");
-  if (!el) return;
-  el.style.display = "block";
-}
-
-async function pingServidor() {
-  try {
-    const r = await fetch(API + "/api/exemplo", { cache: "no-store" });
-    if (!r.ok) throw new Error("bad");
-    $("aviso-offline").style.display = "none";
-    return true;
-  } catch (_) {
-    mostrarAvisoOffline("offline");
-    return false;
-  }
+  if (el) el.style.display = "block";
 }
 
 async function gerar() {
   salvarFichaAtual();
   let payload = veioDePuxar && fichas.length >= 1 ? { fichas: fichas.map(f => ({ dados: f.dados, socios: f.socios })) } : coletar();
+  if (logoBase64Cache) payload.logo = logoBase64Cache;
+  
   payload.formato = ($("formato") && $("formato").value) || "pdf";
   if (payload.formato === "png") {
     payload.resolucao = ($("resolucao") && $("resolucao").value) || "1920x1080";
   }
   const rotulo = payload.formato === "png" ? "PNG" : payload.formato === "txt" ? "TXT" : "PDF";
   mostrarStatus("Gerando " + rotulo + "...", "ok");
+  
   let resp = null;
   for (let t = 0; t < 3; t++) {
     try {
@@ -880,7 +885,7 @@ async function carregarExemplo() {
     const resp = await fetch(API + "/api/exemplo", { cache: "no-store" });
     preencher(await resp.json());
   } catch (_) {
-    mostrarAvisoOffline("offline");
+    mostrarAvisoOffline();
   }
 }
 
@@ -920,7 +925,6 @@ if ($("cep")) {
   $("cep").addEventListener("blur", puxarCep);
   $("cep").addEventListener("change", puxarCep);
 }
-pingServidor();
 carregarExemplo();
 </script>
 </body>
