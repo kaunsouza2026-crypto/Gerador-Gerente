@@ -38,6 +38,7 @@
     width: 38px; height: 38px; border-radius: 8px; flex: none;
     object-fit: cover; display: block;
     box-shadow: 0 2px 10px rgba(0,0,0,.5);
+    background: #fff;
   }
   header h1 { font-size: 18px; font-weight: 600; margin: 0; letter-spacing: .2px; }
   header .tag {
@@ -189,7 +190,8 @@
 <body>
 
 <header>
-  <img class="logo-img" src="brada.png" alt="logo">
+  <!-- Adicionado um número aleatório (?v=...) na frente da imagem para o navegador NUNCA usar cache -->
+  <img class="logo-img" id="logo-header" src="brada.png" alt="logo">
   <h1>Bradesco Net Empresa</h1>
   <span class="tag">#GERADOR GERENTE &nbsp;|&nbsp; PREENCHA E CLIQUE EM GERAR PDF</span>
 </header>
@@ -264,7 +266,7 @@
     <div class="fg-title">Logo atual</div>
     <div class="btns" style="margin:0;align-items:center">
       <img id="logo-preview" src="brada.png" alt="logo" style="width:44px;height:44px;border-radius:8px;object-fit:cover;border:1px solid var(--border2);background:#fff">
-      <span style="font-size:12px;color:var(--muted);font-family:Consolas,monospace">brada.png (carregado do repositório)</span>
+      <span style="font-size:12px;color:var(--muted);font-family:Consolas,monospace">brada.png (atualizado sem cache)</span>
     </div>
   </div>
 
@@ -281,6 +283,15 @@
 <footer>Gerador Gerente &mdash; site local</footer>
 
 <script>
+// Força o navegador a carregar a imagem nova ignorando totalmente qualquer cache
+document.addEventListener("DOMContentLoaded", () => {
+  const timestamp = new Date().getTime();
+  const logoHeader = document.getElementById("logo-header");
+  const logoPreview = document.getElementById("logo-preview");
+  if (logoHeader) logoHeader.src = "brada.png?v=" + timestamp;
+  if (logoPreview) logoPreview.src = "brada.png?v=" + timestamp;
+});
+
 const CAMPOS = [
   "matricula","hora","ag","produto","conta","pag","nome","cpf_cnpj","endereco","cep",
   "bairro","uf","cidade","usuario","celular","email","data_atualizacao","cons_efetuada",
