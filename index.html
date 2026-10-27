@@ -49,7 +49,6 @@
 
   main { max-width: 1100px; margin: 0 auto; padding: 24px 22px 40px; }
 
-  /* ---------- Abas ---------- */
   .tabs { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
   .tab {
     padding: 10px 18px; background: var(--panel); border: 1px solid var(--border);
@@ -70,7 +69,6 @@
   }
   .tab.active::before { background: var(--red); box-shadow: 0 0 8px rgba(240,25,26,.9); }
 
-  /* ---------- Cards ---------- */
   .card {
     background: linear-gradient(180deg, var(--panel2), var(--panel));
     border: 1px solid var(--border); border-radius: 14px; padding: 20px;
@@ -89,7 +87,6 @@
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 26px; }
   @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
 
-  /* ---------- Campos ---------- */
   .row { margin-bottom: 4px; }
   label {
     display: flex; align-items: center; gap: 7px;
@@ -104,22 +101,14 @@
     width: 100%; padding: 10px 12px; background: #0c0c10; color: var(--text);
     border: 1px solid var(--border); border-radius: 9px;
     font-family: Consolas, monospace; font-size: 13.5px;
-    transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
   }
-  input:hover, select:hover, textarea:hover { border-color: var(--border2); }
   input:focus, select:focus, textarea:focus {
     outline: none; border-color: var(--red); background: #0f0f14;
     box-shadow: 0 0 0 3px rgba(240,25,26,.16);
   }
-  input::placeholder, textarea::placeholder { color: #55555f; }
-  select { appearance: auto; }
-  select optgroup { background: #15151a; color: #aaa; font-style: normal; }
-  select option { background: #0f0f12; color: var(--text); }
-
   .hint { font-size: 12.5px; color: var(--muted); margin: 0 0 14px; line-height: 1.6; }
   .hint b { color: #d6d6dc; }
 
-  /* ---------- Grupos (Dados Principais) ---------- */
   .fgroup {
     border: 1px solid var(--border); border-radius: 12px;
     padding: 14px 16px 16px; background: rgba(0,0,0,.22);
@@ -139,58 +128,6 @@
   }
   .fg-title .fg-sub { margin-left: auto; font-weight: 500; color: var(--muted); letter-spacing: .3px; text-transform: none; }
 
-  /* ---------- Area de colagem das fichas ---------- */
-  .dropzone {
-    position: relative; border-radius: 12px;
-    border: 1.5px dashed var(--border2);
-    background:
-      linear-gradient(180deg, rgba(16,38,64,.30), rgba(0,0,0,.35));
-    transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
-  }
-  .dropzone:focus-within {
-    border-color: var(--red);
-    box-shadow: 0 0 0 3px rgba(240,25,26,.14), 0 10px 30px rgba(0,0,0,.35);
-    background: linear-gradient(180deg, rgba(16,38,64,.42), rgba(0,0,0,.38));
-  }
-  .dz-head {
-    display: flex; align-items: center; gap: 9px;
-    padding: 10px 14px 0; font-size: 11px; letter-spacing: 1px;
-    text-transform: uppercase; color: var(--muted); font-weight: 700;
-  }
-  .dz-head .dz-dot {
-    width: 8px; height: 8px; border-radius: 50%; background: var(--green);
-    box-shadow: 0 0 8px rgba(34,222,94,.8);
-  }
-  .dz-head .dz-ico { margin-left: auto; color: #5c5c66; font-size: 10.5px; text-transform: none; letter-spacing: .3px; }
-  .dropzone textarea {
-    border: none; background: transparent; resize: vertical;
-    padding: 10px 14px 14px; box-shadow: none; min-height: 220px;
-    line-height: 1.6; font-size: 12.5px;
-  }
-  .dropzone textarea:focus { box-shadow: none; background: transparent; }
-
-  /* ---------- Chips das fichas carregadas ---------- */
-  #fichas-bar { gap: 9px; }
-  .chip {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 8px 15px; border-radius: 999px; font-size: 12.5px;
-    background: var(--panel2); border: 1px solid var(--border);
-    color: var(--muted); cursor: pointer; font-weight: 600;
-    transition: all .15s ease;
-  }
-  .chip::before {
-    content: ""; width: 7px; height: 7px; border-radius: 50%;
-    background: var(--border2);
-  }
-  .chip:hover { border-color: var(--border2); color: #d6d6dc; transform: translateY(-1px); }
-  .chip.on {
-    color: #fff; background: linear-gradient(180deg, #26262f, #1b1b22);
-    border-color: var(--red-dim);
-    box-shadow: 0 4px 14px rgba(240,25,26,.18);
-  }
-  .chip.on::before { background: var(--red); box-shadow: 0 0 8px rgba(240,25,26,.9); }
-
-  /* ---------- Tabela ---------- */
   table { width: 100%; border-collapse: separate; border-spacing: 0; font-family: Consolas, monospace; font-size: 13px; }
   th, td { padding: 10px 11px; text-align: left; border-bottom: 1px solid var(--border); }
   th {
@@ -198,14 +135,10 @@
     text-transform: uppercase; letter-spacing: .8px;
     background: rgba(0,0,0,.3);
   }
-  th:first-child { border-top-left-radius: 9px; }
-  th:last-child { border-top-right-radius: 9px; }
-  tr:last-child td { border-bottom: none; }
   tr.sel td, tbody tr:hover td { background: #22222a; }
   td input { border: none; background: transparent; padding: 5px 7px; width: 100%; color: var(--text); font-family: Consolas, monospace; font-size: 13px; border-radius: 6px; }
   td input:focus { outline: 1px solid var(--red); background: #12121a; }
 
-  /* ---------- Botoes ---------- */
   .btns { display: flex; gap: 10px; margin: 18px 0; flex-wrap: wrap; align-items: center; }
   button {
     padding: 11px 20px; border: none; border-radius: 9px; cursor: pointer;
@@ -215,34 +148,29 @@
     transition: all .15s ease;
   }
   button:hover { transform: translateY(-1px); filter: brightness(1.12); box-shadow: 0 6px 18px rgba(0,0,0,.35); }
-  button:active { transform: translateY(0); }
   button.primary {
     background: linear-gradient(180deg, #ff2f30, #cf1214);
     border-color: rgba(255,255,255,.14);
     box-shadow: 0 6px 20px rgba(240,25,26,.30);
   }
   button.ghost { background: transparent; border: 1px solid var(--border2); color: var(--muted); }
-  button.ghost:hover { color: #d6d6dc; border-color: #4a4a58; }
   button.small { padding: 7px 14px; font-size: 12px; border-radius: 8px; }
 
-  /* ---------- Status ---------- */
   .status {
     margin-top: 16px; padding: 12px 15px; border-radius: 10px; font-size: 13px;
     background: #11201a; color: var(--green); border: 1px solid #1d3a29;
     display: none; font-family: Consolas, monospace; word-break: break-all;
     line-height: 1.6; white-space: pre-line;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
   }
   .status.err { background: #211315; color: #ff6b6b; border-color: #452023; display: block; }
   .status.ok { display: block; }
 
-  /* ---------- Preview ---------- */
   .preview {
     margin-top: 20px; background: #000; border: 1px solid var(--border);
     border-radius: 12px; padding: 22px 24px;
     font-family: Consolas, "Courier New", monospace; font-size: 12.5px;
     line-height: 1.6; white-space: pre; overflow-x: auto; color: #fff;
-    box-shadow: 0 14px 40px rgba(0,0,0,.5), inset 0 0 60px rgba(255,255,255,.015);
+    box-shadow: 0 14px 40px rgba(0,0,0,.5);
     position: relative;
   }
   .preview .red { color: #ff3b3b; }
@@ -251,13 +179,9 @@
   .preview .right { float: right; }
 
   .st { font-weight: bold; }
-  .st.verde { color: var(--green); text-shadow: 0 0 10px rgba(34,222,94,.35); }
-  .st.vermelho { color: #ff3b3b; text-shadow: 0 0 10px rgba(255,59,59,.35); }
-  .st.amarelo { color: #ffd23f; text-shadow: 0 0 10px rgba(255,210,63,.35); }
-
-  .op-label { align-self: center; font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .7px; font-weight: 700; }
-  .op-label::before { display: none; }
-  .op-sel { width: auto !important; min-width: 130px; padding: 10px 12px !important; }
+  .st.verde { color: var(--green); }
+  .st.vermelho { color: #ff3b3b; }
+  .st.amarelo { color: #ffd23f; }
 
   footer { text-align: center; color: var(--muted); font-size: 12px; padding: 22px; }
 </style>
@@ -265,16 +189,12 @@
 <body>
 
 <header>
-  <img class="logo-img" src="brada.jpg" alt="logo">
+  <img class="logo-img" src="brada.png" alt="logo">
   <h1>Bradesco Net Empresa</h1>
   <span class="tag">#GERADOR GERENTE &nbsp;|&nbsp; PREENCHA E CLIQUE EM GERAR PDF</span>
 </header>
 
 <main>
-  <div id="aviso-offline" style="display:none;background:#3a1518;border:1px solid #7a2a2f;color:#ff8f94;padding:14px 16px;border-radius:10px;margin-bottom:14px;font-size:14px;line-height:1.6">
-    <b>Servidor desligado.</b><br>
-    Va na pasta <b>gerente</b> e rode o <b>Abrir Site.bat</b> (ou <b>python app.py</b>), depois clique aqui em GERAR PDF de novo.
-  </div>
   <div class="tabs">
     <div class="tab active" data-tab="fichas">Fichas (Puxar dados)</div>
     <div class="tab" data-tab="dados">Dados Principais</div>
@@ -282,21 +202,9 @@
     <div class="tab" data-tab="socios">Socios</div>
   </div>
 
-  <!-- ============ FICHAS ============ -->
   <section class="card active" id="tab-fichas">
-    <p class="hint">
-      Cole aqui o texto de <b>1, 2 ou 3 fichas</b> (pode colar todas de uma vez).<br>
-      Ele detecta os formatos e puxa automaticamente: agencia/conta, CNPJ, razao social,
-      usuario, telefone, e-mail e socios. Depois e so ajustar o resto na aba Dados.
-    </p>
-    <div class="dropzone">
-      <div class="dz-head">
-        <span class="dz-dot"></span>
-        Area de colagem
-        <span class="dz-ico">Ctrl+V para colar</span>
-      </div>
-      <textarea id="ficha-texto" rows="14" placeholder="Cole aqui o texto da(s) ficha(s)..."></textarea>
-    </div>
+    <p class="hint">Cole aqui o texto de <b>1, 2 ou 3 fichas</b> para puxar automaticamente.</p>
+    <textarea id="ficha-texto" rows="14" style="width:100%;background:#0c0c10;color:#ececef;border:1px solid var(--border2);border-radius:9px;padding:12px;font-family:Consolas,monospace" placeholder="Cole aqui o texto da(s) ficha(s)..."></textarea>
     <div class="btns">
       <button class="primary" id="btn-puxar">PUXAR FICHA(S)</button>
       <button class="ghost" id="btn-limpar-fichas">Limpar fichas</button>
@@ -304,99 +212,44 @@
     <div class="status" id="ficha-status" style="display:none"></div>
   </section>
 
-  <!-- Barra de fichas carregadas -->
   <div id="fichas-bar" style="display:none;margin:16px 0 12px"></div>
 
-  <!-- ============ DADOS ============ -->
   <section class="card" id="tab-dados">
-    <div class="fgroup">
-      <div class="fg-title">Identificacao <span class="fg-sub">matricula, agencia, conta e pagina</span></div>
-      <div class="grid">
-        <div class="row"><label>Matricula</label><input id="matricula"></div>
-        <div class="row"><label>Hora (vazio = automatica)</label><input id="hora" placeholder="auto"></div>
-        <div class="row"><label>Agencia (AG)</label><input id="ag"></div>
-        <div class="row"><label>Produto</label><input id="produto"></div>
-        <div class="row"><label>Conta</label><input id="conta"></div>
-        <div class="row"><label>Pagina</label><input id="pag"></div>
-      </div>
-    </div>
-
-    <div class="fgroup">
-      <div class="fg-title">Empresa <span class="fg-sub">razao social, documento e endereco</span></div>
-      <div class="grid">
-        <div class="row" style="grid-column:1/-1"><label>Nome / Razao Social</label><input id="nome"></div>
-        <div class="row"><label>CPF / CNPJ</label><input id="cpf_cnpj"></div>
-        <div class="row"><label>CEP (preenche endereco sozinho)</label><input id="cep" placeholder="00000-000"></div>
-        <div class="row" style="display:none"><label>Endereco</label><input id="endereco"></div>
-        <div class="row" style="display:none"><label>Bairro</label><input id="bairro"></div>
-        <div class="row" style="display:none"><label>UF</label><input id="uf"></div>
-        <div class="row" style="display:none"><label>Cidade</label><input id="cidade"></div>
-      </div>
-    </div>
-
-    <div class="fgroup">
-      <div class="fg-title">Contato <span class="fg-sub">usuario, celular e e-mail</span></div>
-      <div class="grid">
-        <div class="row"><label>Usuario</label><input id="usuario"></div>
-        <div class="row"><label>Celular</label><input id="celular"></div>
-        <div class="row" style="grid-column:1/-1"><label>Email</label><input id="email"></div>
-      </div>
-    </div>
-
-    <div class="fgroup" style="margin-bottom:0">
-      <div class="fg-title">Textos do documento <span class="fg-sub">topo, data e rodape</span></div>
-      <div class="grid">
-        <div class="row"><label>Data Ultima Atualizacao</label><input id="data_atualizacao"></div>
-        <div class="row"><label>Texto topo esquerdo</label><input id="confidencial"></div>
-        <div class="row"><label>Texto topo direito</label><input id="sistema"></div>
-        <div class="row"><label>Rodape (F-keys)</label><input id="fkeys"></div>
-      </div>
+    <div class="grid">
+      <div class="row"><label>Matricula</label><input id="matricula" value="749.152-3"></div>
+      <div class="row"><label>Hora</label><input id="hora" placeholder="auto"></div>
+      <div class="row"><label>Agencia (AG)</label><input id="ag" value="0513"></div>
+      <div class="row"><label>Produto</label><input id="produto" value="251"></div>
+      <div class="row"><label>Conta</label><input id="conta" value="431487"></div>
+      <div class="row"><label>Pagina</label><input id="pag" value="001"></div>
+      <div class="row" style="grid-column:1/-1"><label>Nome / Razao Social</label><input id="nome" value="AL CONSULTING CONSULTORIA E NEGOCIOS LTDA"></div>
+      <div class="row"><label>CPF / CNPJ</label><input id="cpf_cnpj" value="31879565000114"></div>
+      <div class="row"><label>CEP</label><input id="cep" value="-"></div>
+      <div class="row" style="display:none"><label>Endereco</label><input id="endereco" value="-"></div>
+      <div class="row" style="display:none"><label>Bairro</label><input id="bairro" value="-"></div>
+      <div class="row"><label>UF</label><input id="uf" value="MG"></div>
+      <div class="row" style="grid-column:1/-1"><label>Cidade</label><input id="cidade" value="BELO HORIZONTE"></div>
+      <div class="row"><label>Usuario</label><input id="usuario" value="PAPDB00001"></div>
+      <div class="row"><label>Celular</label><input id="celular" value="31984934272"></div>
+      <div class="row" style="grid-column:1/-1"><label>Email</label><input id="email" value="FINANCEIRO@ANDRADELEMES.COM"></div>
+      <div class="row"><label>Data Ultima Atualizacao</label><input id="data_atualizacao" value="****"></div>
+      <div class="row"><label>Cons Efetuada</label><input id="cons_efetuada" value="_"></div>
+      <div class="row"><label>Topo esquerdo</label><input id="confidencial" value="#CONFIDENCIAL"></div>
+      <div class="row"><label>Topo direito</label><input id="sistema" value="#SISTEMA INTERNO"></div>
+      <div class="row" style="grid-column:1/-1"><label>Rodape (F-keys)</label><input id="fkeys" value="F01 - AJUDA          F03 - RETORNAR        F04 - MENU          F05 - DETALHE"></div>
     </div>
   </section>
 
-  <!-- ============ SITUACOES ============ -->
   <section class="card" id="tab-situacoes">
-    <p class="hint">
-      Escolha nas setas. As cores sao aplicadas automaticamente no PDF:<br>
-      <b style="color:var(--green)">ATIVA / ATIVO / VALIDO / LIBERADO</b> &rarr; verde &nbsp;&nbsp;|&nbsp;&nbsp;
-      <b style="color:#ff3b3b">PENDENTE / INATIVO / EXPIRADO / VENCIDO / BLOQUEADO</b> &rarr; vermelho &nbsp;&nbsp;|&nbsp;&nbsp;
-      <b style="color:#ffd23f">EXPIRA EM X DIAS</b> &rarr; amarelo
-    </p>
-    <div class="fgroup" style="margin-bottom:0">
-      <div class="fg-title">Status do documento <span class="fg-sub">cores aplicadas sozinhas no gerador</span></div>
-      <div class="grid">
-        <div class="row"><label>SITUACAO</label>
-          <select id="situacao"></select></div>
-        <div class="row"><label>SITUACAO CADASTRAL</label>
-          <select id="situacao_cadastral"></select></div>
-        <div class="row"><label>MODULO TOPAZ</label>
-          <select id="modulo_topaz"></select></div>
-        <div class="row"><label>CERTIFICADO DIGITAL</label>
-          <input id="certificado" list="dl-certificado" placeholder="EXPIRADO ou EXPIRA EM X DIAS">
-        <datalist id="dl-certificado">
-          <option value="EXPIRADO"></option>
-          <option value="EXPIRA EM 1 DIA"></option>
-          <option value="EXPIRA EM 2 DIAS"></option>
-          <option value="EXPIRA EM 3 DIAS"></option>
-          <option value="EXPIRA EM 4 DIAS"></option>
-          <option value="EXPIRA EM 5 DIAS"></option>
-          <option value="EXPIRA EM 6 DIAS"></option>
-          <option value="EXPIRA EM 7 DIAS"></option>
-          <option value="EXPIRA EM 10 DIAS"></option>
-          <option value="EXPIRA EM 15 DIAS"></option>
-          <option value="EXPIRA EM 30 DIAS"></option>
-          <option value="VALIDO"></option>
-        </datalist>
-        </div>
-      </div>
+    <div class="grid">
+      <div class="row"><label>SITUACAO</label><input id="situacao" value="ATIVA"></div>
+      <div class="row"><label>SITUACAO CADASTRAL</label><input id="situacao_cadastral" value="PENDENTE"></div>
+      <div class="row"><label>MODULO TOPAZ</label><input id="modulo_topaz" value="INATIVO"></div>
+      <div class="row"><label>CERTIFICADO DIGITAL</label><input id="certificado" value="EXPIRADO"></div>
     </div>
   </section>
 
-  <!-- ============ SOCIOS ============ -->
   <section class="card" id="tab-socios">
-    <div class="fg-title" style="border-bottom:none;padding-bottom:0;margin-bottom:12px">
-      Quadro de socios <span class="fg-sub">duplo clique numa linha para editar</span>
-    </div>
     <div class="btns" style="margin-top:0">
       <button class="small" id="btn-add">+ Adicionar</button>
       <button class="small ghost" id="btn-del">- Remover</button>
@@ -407,43 +260,16 @@
     </table>
   </section>
 
-  <div class="fgroup" style="margin-bottom:14px">
-    <div class="fg-title">Logo do documento <span class="fg-sub">padrao: brada.jpg — troque se quiser</span></div>
+  <div class="fgroup" style="margin:14px 0">
+    <div class="fg-title">Logo atual</div>
     <div class="btns" style="margin:0;align-items:center">
-      <img id="logo-preview" src="brada.jpg" alt="logo" style="width:44px;height:44px;border-radius:8px;object-fit:cover;border:1px solid var(--border2);background:#fff">
-      <button class="ghost" id="btn-trocar-logo">Trocar logo</button>
-      <button class="ghost" id="btn-logo-padrao" style="display:none">Usar a padrão (brada.jpg)</button>
-      <span id="logo-nome" style="font-size:12px;color:var(--muted);font-family:Consolas,monospace"></span>
-      <input type="file" id="logo-file" accept="image/png,image/jpeg,image/webp" style="display:none">
+      <img id="logo-preview" src="brada.png" alt="logo" style="width:44px;height:44px;border-radius:8px;object-fit:cover;border:1px solid var(--border2);background:#fff">
+      <span style="font-size:12px;color:var(--muted);font-family:Consolas,monospace">brada.png (carregado do repositório)</span>
     </div>
   </div>
 
   <div class="btns">
-    <label for="formato" class="op-label">Formato de saída:</label>
-    <select id="formato" class="op-sel">
-      <option value="pdf" selected>PDF</option>
-      <option value="png">Imagem PNG</option>
-      <option value="txt">Arquivo TXT</option>
-    </select>
-    <label for="resolucao" id="lbl-resolucao" class="op-label" style="display:none">Resolução PNG:</label>
-    <select id="resolucao" class="op-sel" style="display:none">
-      <option value="800x600">800 x 600 (15")</option>
-      <option value="1024x768">1024 x 768 (17")</option>
-      <option value="1280x720">1280 x 720 HD (19")</option>
-      <option value="1280x800">1280 x 800 (19")</option>
-      <option value="1366x768">1366 x 768 (19")</option>
-      <option value="1440x900">1440 x 900 (20")</option>
-      <option value="1600x900">1600 x 900 (20")</option>
-      <option value="1680x1050">1680 x 1050 (22")</option>
-      <option value="1920x1080" selected>1920 x 1080 Full HD (24")</option>
-      <option value="1920x1200">1920 x 1200 (24")</option>
-      <option value="2560x1080">2560 x 1080 Ultrawide (29")</option>
-      <option value="2560x1440">2560 x 1440 2K/QHD (27")</option>
-      <option value="2560x1600">2560 x 1600 (30")</option>
-      <option value="3440x1440">3440 x 1440 Ultrawide (34")</option>
-      <option value="3840x2160">3840 x 2160 4K UHD (32"/43")</option>
-    </select>
-    <button class="primary" id="btn-gerar">GERAR</button>
+    <button class="primary" id="btn-gerar">GERAR PDF</button>
     <button class="ghost" id="btn-reset">Restaurar exemplo</button>
   </div>
 
@@ -452,97 +278,18 @@
   <div class="preview" id="preview"></div>
 </main>
 
-<footer>Gerador Gerente &mdash; site local (roda na sua maquina, nada e enviado para a internet)</footer>
+<footer>Gerador Gerente &mdash; site local</footer>
 
 <script>
 const CAMPOS = [
   "matricula","hora","ag","produto","conta","pag","nome","cpf_cnpj","endereco","cep",
-  "bairro","uf","cidade","usuario","celular","email","data_atualizacao",
+  "bairro","uf","cidade","usuario","celular","email","data_atualizacao","cons_efetuada",
   "confidencial","sistema","fkeys","situacao","situacao_cadastral","modulo_topaz","certificado"
 ];
-// Endereco fixo do servidor - funciona abrindo pelo arquivo OU pelo site
 const API = "http://127.0.0.1:8765";
-const VERDE = new Set(["ATIVA","ATIVO","VALIDO","VALIDA","LIBERADO","LIBERADA","ATIVO/VALIDO","HOMOLOGADO","CADASTRADO"]);
-const VERMELHO = new Set(["PENDENTE","INATIVO","INATIVA","EXPIRADO","EXPIRADA","VENCIDO","VENCIDA","NEGATIVA","BLOQUEADO","BLOQUEADA","CANCELADO","CANCELADA","REVOGADO","REVOGADA"]);
-const OPCOES_SIT = {
-  verde: ["ATIVA","ATIVO","VALIDA","VALIDO","LIBERADO","LIBERADA","ATIVO/VALIDO","HOMOLOGADO","CADASTRADO"],
-  vermelho: ["PENDENTE","INATIVO","INATIVA","EXPIRADO","EXPIRADA","VENCIDO","VENCIDA","NEGATIVA","BLOQUEADO","BLOQUEADA","CANCELADO","CANCELADA","REVOGADO","REVOGADA"]
-};
-
-function montarSelects() {
-  ["situacao","situacao_cadastral","modulo_topaz"].forEach(id => {
-    const sel = $(id);
-    if (!sel) return;
-    sel.innerHTML = "";
-    const vazio = document.createElement("option");
-    vazio.value = ""; vazio.textContent = "(vazio)";
-    sel.appendChild(vazio);
-    const og1 = document.createElement("optgroup");
-    og1.label = "Verde (ok)";
-    OPCOES_SIT.verde.forEach(v => {
-      const o = document.createElement("option");
-      o.value = v; o.textContent = v; o.style.color = "#22de5e";
-      og1.appendChild(o);
-    });
-    const og2 = document.createElement("optgroup");
-    og2.label = "Vermelho (alerta)";
-    OPCOES_SIT.vermelho.forEach(v => {
-      const o = document.createElement("option");
-      o.value = v; o.textContent = v; o.style.color = "#ff3b3b";
-      og2.appendChild(o);
-    });
-    sel.appendChild(og1);
-    sel.appendChild(og2);
-    sel.addEventListener("change", atualizarPreview);
-  });
-}
-
-function garantirOpcao(id, valor) {
-  const el = $(id);
-  if (!el || !valor) return;
-  if (el.tagName === "INPUT") {
-    el.value = valor;
-    return;
-  }
-  const existe = Array.from(el.options).some(o => o.value === valor);
-  if (!existe) {
-    const o = document.createElement("option");
-    o.value = valor; o.textContent = valor + " (outro)";
-    el.appendChild(o);
-  }
-  el.value = valor;
-}
-
-let socios = [];
+let socios = [{ cargo: "ADMINISTRADOR", nome: "RAFAEL ANDRADE LEMES", cpf: "06493570603", contato: "31984934272" }];
 let selIdx = -1;
-let exemplo = null;
-let fichas = [];       // [{dados:{}, socios:[{cargo,nome,cpf,contato}]}]
-let idxFicha = 0;
-let veioDePuxar = false;
-
 const $ = id => document.getElementById(id);
-
-function formatarCpfCnpj(v) {
-  const d = String(v || "").replace(/\D/g, "");
-  if (d.length === 11) return d.slice(0,3) + "." + d.slice(3,6) + "." + d.slice(6,9) + "-" + d.slice(9);
-  if (d.length === 14) return d.slice(0,2) + "." + d.slice(2,5) + "." + d.slice(5,8) + "/" + d.slice(8,12) + "-" + d.slice(12);
-  return v || "";
-}
-
-function formatarTelefone(v) {
-  const d = String(v || "").replace(/\D/g, "");
-  if (d.length === 11) return "(" + d.slice(0,2) + ") " + d.slice(2,7) + "-" + d.slice(7);
-  if (d.length === 10) return "(" + d.slice(0,2) + ") " + d.slice(2,6) + "-" + d.slice(6);
-  return v || "";
-}
-
-function corClasse(v) {
-  const t = (v || "").trim().toUpperCase();
-  if (VERDE.has(t)) return "verde";
-  if (t.startsWith("EXPIRA EM")) return "amarelo";
-  if (VERMELHO.has(t)) return "vermelho";
-  return "";
-}
 
 function tabsInit() {
   document.querySelectorAll(".tab").forEach(tab => {
@@ -555,233 +302,16 @@ function tabsInit() {
   });
 }
 
-function abrirTab(nome) {
-  document.querySelector(`.tab[data-tab="${nome}"]`).click();
-}
-
-/* ================= PARSER DE FICHAS ================= */
-function normLabel(s) {
-  return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase();
-}
-
-function extrairValor(texto, rotulos) {
-  const linhas = texto.split(/\r?\n/);
-  // Prioriza os rotulos na ordem da lista (ex: E-MAIL antes de E-MAIL GOV)
-  for (const rot of rotulos) {
-    const nr = normLabel(rot);
-    for (const linha of linhas) {
-      const nl = normLabel(linha).trim();
-      // So casa o rotulo exato seguido de ":" (evita "E-MAIL" pegar "E-MAIL GOV:")
-      if (nl === nr || nl.startsWith(nr + ":") || nl.startsWith(nr + " :")) {
-        const idx = linha.indexOf(":");
-        if (idx < 0) continue;
-        let v = linha.slice(idx + 1).trim();
-        v = v.replace(/^:\s*/, "").trim();
-        if (/^null$/i.test(v)) v = "";
-        if (v !== "") return v;
-      }
-    }
-  }
-  return "";
-}
-
-function parserAgConta(texto) {
-  // Formato A: "AGÊNCIA/CONTA: 0553|406-5" ou "AGENCIA/CONTA: 0553 / 406-5"
-  let m = texto.match(/AG[ÊE]NCIA\s*\/\s*CONTA\s*:\s*([0-9]+)\s*[|\/]\s*([0-9\-]+)/i);
-  if (m) return { ag: m[1], conta: m[2] };
-  // Formato B: "Agência: 1016 / Conta: 22378-6"
-  m = texto.match(/Ag[êe]ncia\s*:\s*([0-9]+)\s*\/\s*Conta\s*:\s*([0-9\-]+)/i);
-  if (m) return { ag: m[1], conta: m[2] };
-  return { ag: "", conta: "" };
-}
-
-function parserSocios(texto) {
-  const socios = [];
-  // Formato B: bloco Socios: com linhas "CPF: X | Nome: Y | Renda: ... "
-  const temBlocoSocios = /Socios\s*:\s*$/im.test(texto) || /^\s*CPF\s*:/im.test(texto);
-  const linhas = texto.split(/\r?\n/);
-  let emBloco = false;
-  let atual = null;
-  for (const linha of linhas) {
-    if (/^\s*Socios\s*:\s*$/i.test(linha)) { emBloco = true; continue; }
-    if (/^\s*CPF\s*:/i.test(linha) && (emBloco || /Nome\s*:/i.test(linha))) {
-      if (atual) socios.push(atual);
-      const cpf = (linha.match(/CPF\s*:\s*([0-9.\-\/]+)/i) || [])[1] || "";
-      const nome = (linha.match(/Nome\s*:\s*([^|]+)/i) || [])[1] || "";
-      atual = { cargo: "ADMINISTRADOR", nome: nome.trim(), cpf: cpf.trim(), contato: "" };
-      emBloco = true;
-      continue;
-    }
-    if (atual && emBloco) {
-      const usuario = (linha.match(/Usu[áa]rio\s*:\s*(\S+)/i) || [])[1];
-      if (usuario && !atual._user) { atual._user = usuario.trim(); }
-    }
-  }
-  if (atual) socios.push(atual);
-
-  // Formato A: usuario master
-  if (socios.length === 0) {
-    const cpfMaster = extrairValor(texto, ["CPF USUÁRIO MASTER", "CPF USUARIO MASTER", "CPF MASTER"]);
-    const nomeMaster = extrairValor(texto, ["NOME USUÁRIO MASTER", "NOME USUARIO MASTER", "NOME MASTER"]);
-    if (cpfMaster || nomeMaster) {
-      socios.push({ cargo: "ADMINISTRADOR", nome: nomeMaster, cpf: cpfMaster, contato: "" });
-    }
-  }
-  socios.forEach(s => { delete s._user; });
-  return socios;
-}
-
-function parserFicha(texto) {
-  const { ag, conta } = parserAgConta(texto);
-  const dados = {
-    matricula: "749.152-3", hora: "",
-    confidencial: "#CONFIDENCIAL", sistema: "#SISTEMA INTERNO",
-    ag, produto: "237", conta, pag: "001",
-    nome: extrairValor(texto, ["RAZÃO SOCIAL", "RAZAO SOCIAL", "EMPRESA", "NOME"]),
-    cpf_cnpj: extrairValor(texto, ["CNPJ", "CPF/CNPJ"]),
-    endereco: "-", cep: "-", bairro: "-", uf: "-", cidade: "-",
-    situacao: "ATIVA",
-    situacao_cadastral: extrairValor(texto, ["SITUAÇÃO CADASTRAL", "SITUACAO CADASTRAL", "SITUAÇÃO"]) || "ATIVA",
-    modulo_topaz: "INATIVO", certificado: "EXPIRADO",
-    usuario: extrairValor(texto, ["USUÁRIOS", "USUARIOS", "USUÁRIO", "USUARIO"]),
-    celular: extrairValor(texto, ["TELEFONE GOV", "TELEFONE", "CELULAR"]),
-    email: extrairValor(texto, ["E-MAIL", "EMAIL", "E-MAIL GOV", "EMAIL GOV"]),
-    data_atualizacao: "****", cons_efetuada: "_",
-    fkeys: "F01 - AJUDA          F03 - RETORNAR        F04 - MENU          F05 - DETALHE"
-  };
-  return { dados, socios: [] };
-}
-
-function separarFichas(texto) {
-  const linhas = texto.split(/\r?\n/);
-  const partes = [];
-  let atual = [];
-  for (const linha of linhas) {
-    const nl = normLabel(linha).trim();
-    // Novo inicio de ficha
-    if (/^AG[ÊE]NCIA\s*\/\s*CONTA\s*:/.test(nl) || /^EMPRESA\s*:/.test(nl)) {
-      if (atual.length) partes.push(atual.join("\n"));
-      atual = [];
-    }
-    atual.push(linha);
-  }
-  if (atual.length) partes.push(atual.join("\n"));
-  return partes.map(p => p.trim()).filter(p => p.length > 10);
-}
-
-function puxarFichas() {
-  const texto = $("ficha-texto").value;
-  const partes = separarFichas(texto);
-  if (!partes.length) {
-    mostrarFichaStatus("Nenhuma ficha detectada. Cole o texto e tente novamente.", "err");
-    return;
-  }
-  fichas = partes.map(parserFicha);
-  idxFicha = 0;
-  veioDePuxar = true;
-  carregarFichaNaTela(0);
-  renderFichasBar();
-  const found = fichas.map((f, i) =>
-    `Ficha ${i + 1}: ${f.dados.nome || "(sem nome)"} | AG ${f.dados.ag || "-"} Conta ${f.dados.conta || "-"} | ${f.socios.length} socio(s)`
-  ).join("\n");
-  mostrarFichaStatus(`Puxou ${fichas.length} ficha(s)!\n` + found, "ok");
-  abrirTab("dados");
-}
-
-function mostrarFichaStatus(msg, tipo) {
-  const el = $("ficha-status");
-  el.textContent = msg;
-  el.style.display = "block";
-  el.className = "status " + (tipo || "ok");
-}
-
-/* ============ CEP auto ============ */
-async function puxarCep() {
-  const bruto = ($("cep") ? $("cep").value : "").replace(/\D/g, "");
-  if (bruto.length !== 8) return;
-  try {
-    const resp = await fetch(`https://viacep.com.br/ws/${bruto}/json/`);
-    if (!resp.ok) return;
-    const j = await resp.json();
-    if (j.erro) {
-      mostrarStatus("CEP nao encontrado.", "err");
-      return;
-    }
-    if ($("endereco")) $("endereco").value = (j.logradouro || "").toUpperCase() || $("endereco").value;
-    if ($("bairro")) $("bairro").value = (j.bairro || "").toUpperCase() || "-";
-    if ($("cidade")) $("cidade").value = (j.localidade || "").toUpperCase() || "-";
-    if ($("uf")) $("uf").value = (j.uf || "").toUpperCase() || "";
-    atualizarPreview();
-    // preenche sem mostrar aviso (evita pular o layout)
-  } catch (_) {
-    /* offline ou erro de rede - ignora */
-  }
-}
-
-function renderFichasBar() {
-  const bar = $("fichas-bar");
-  if (fichas.length <= 1) {
-    bar.style.display = "none";
-    bar.innerHTML = "";
-    return;
-  }
-  bar.style.display = "flex";
-  bar.innerHTML = "";
-  fichas.forEach((f, i) => {
-    const b = document.createElement("button");
-    b.className = "chip" + (i === idxFicha ? " on" : "");
-    b.textContent = `Ficha ${i + 1}${f.dados.nome ? " — " + f.dados.nome.slice(0, 22) : ""}`;
-    b.addEventListener("click", () => {
-      salvarFichaAtual();
-      idxFicha = i;
-      carregarFichaNaTela(i);
-      renderFichasBar();
-    });
-    bar.appendChild(b);
-  });
-}
-
-function carregarFichaNaTela(i) {
-  const f = fichas[i];
-  CAMPOS.forEach(k => { if ($(k)) $(k).value = f.dados[k] ?? ""; });
-  ["situacao","situacao_cadastral","modulo_topaz","certificado"].forEach(k => {
-    if (f.dados[k]) garantirOpcao(k, f.dados[k]);
-  });
-  socios = f.socios.map(s => ({...s}));
-  selIdx = -1;
-  renderSocios();
-  atualizarPreview();
-}
-
-function salvarFichaAtual() {
-  if (!fichas.length) return;
-  const { dados, socios: soc } = coletar();
-  fichas[idxFicha] = { dados, socios: soc };
-}
-
 function renderSocios() {
   const tb = $("socios-body");
   tb.innerHTML = "";
   socios.forEach((s, i) => {
     const tr = document.createElement("tr");
     if (i === selIdx) tr.classList.add("sel");
-    const campos = ["cargo", "nome", "contato"];
-    let html = `<td>${i + 1}</td>`;
-    campos.forEach(c => {
-      html += `<td><input data-i="${i}" data-k="${c}" value="${(s[c] || "").replace(/"/g, "&quot;")}"></td>`;
-    });
-    tr.innerHTML = html;
-    tr.addEventListener("click", () => {
-      if (selIdx !== i) {
-        selIdx = i;
-        document.querySelectorAll("#socios-body tr").forEach(r => r.classList.remove("sel"));
-        tr.classList.add("sel");
-      }
-    });
+    tr.innerHTML = `<td>${i + 1}</td><td><input data-i="${i}" data-k="cargo" value="${s.cargo}"></td><td><input data-i="${i}" data-k="nome" value="${s.nome}"></td><td><input data-i="${i}" data-k="contato" value="${s.contato}"></td>`;
     tb.appendChild(tr);
   });
   tb.querySelectorAll("input").forEach(inp => {
-    inp.addEventListener("click", e => e.stopPropagation());
     inp.addEventListener("input", e => {
       socios[+e.target.dataset.i][e.target.dataset.k] = e.target.value;
       atualizarPreview();
@@ -792,246 +322,63 @@ function renderSocios() {
 function coletar() {
   const dados = {};
   CAMPOS.forEach(k => dados[k] = ($(k) ? $(k).value : "").trim());
-  return { dados, socios: socios.map(s => ({...s})) };
-}
-
-function preencher(ex) {
-  exemplo = ex;
-  veioDePuxar = false;
-  fichas = [{ dados: {...ex.dados}, socios: ex.socios.map(s => ({
-    cargo: s[0] || s.cargo || "",
-    nome: s[1] || s.nome || "",
-    cpf: s[2] || s.cpf || "",
-    contato: s[3] || s.contato || ""
-  })) }];
-  idxFicha = 0;
-  carregarFichaNaTela(0);
-  renderFichasBar();
-}
-
-function pad(texto, larg) {
-  texto = String(texto ?? "");
-  return texto.length >= larg ? texto : texto + " ".repeat(larg - texto.length);
+  return { dados, socios: socios.map(s => ({...s})), logo: "brada.png" };
 }
 
 function atualizarPreview() {
   const { dados: d, socios: soc } = coletar();
   const hora = d.hora || new Date().toTimeString().slice(0, 5);
-  const st = (v) => `<span class="st ${corClasse(v)}">${esc(v)}</span>`;
-  const esc = s => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;");
-  const prev = $("preview");
-  // Linha tracejada ponta a ponta do box da previa
-  let nDash = 116;
-  try {
-    const ctx = document.createElement("canvas").getContext("2d");
-    ctx.font = "12.5px Consolas, monospace";
-    const cw = ctx.measureText("-").width || 7.5;
-    const larg = (prev ? prev.clientWidth : 900) - 44; // menos padding
-    nDash = Math.max(20, Math.floor(larg / cw));
-  } catch (_) {}
-  const dash = '<span class="gray">' + "-".repeat(nDash) + "</span>";
-
   let html = "";
-  html += `${esc(d.matricula) ? "MATRÍCULA: " + esc(d.matricula) : ""}<span class="right">${esc(hora)}</span>\n`;
-  html += `${esc(d.confidencial)}<span class="right">${esc(d.sistema)}</span>\n`;
-  html += dash + "\n";
-  html += `AG: ${esc(d.ag)}        PRODUTO: ${esc(d.produto)}        CONTA: ${esc(d.conta)}<span class="right">PAG: ${esc(d.pag)}</span>\n`;
-  html += `RAZÃO SOCIAL: ${esc(d.nome)}<span class="right">CPF/CNPJ: ${esc(formatarCpfCnpj(d.cpf_cnpj))}</span>\n\n`;
-  html += `ENDEREÇO: ${esc(d.endereco)}\n`;
-  html += `${pad("CEP: " + d.cep, 24)}BAIRRO: ${esc(d.bairro)}\n`;
-  html += `${pad("UF: " + d.uf, 24)}CIDADE: ${esc(d.cidade)}\n`;
-  html += `SITUAÇÃO: ${st(d.situacao)}   SITUAÇÃO CADASTRAL: ${st(d.situacao_cadastral)}   MÓDULO TOPAZ: ${st(d.modulo_topaz)}   CERTIFICADO DIGITAL: ${st(d.certificado)}\n`;
-  if ((d.usuario || "").trim() && d.usuario.trim().toLowerCase() !== "null") {
-    html += `USUARIO: ${esc(d.usuario)}\n`;
-  }
-  html += `CELULAR: ${esc(formatarTelefone(d.celular))}\n`;
-  html += `EMAIL: ${esc(d.email)}\n`;
-  html += dash + "\n\n";
-  html += `DATA ULTIMA ATUALIZACAO: ${esc(d.data_atualizacao)}\n\n`;
+  html += `MATRÍCULA: ${d.matricula}    <span class="right">${hora}</span>\n`;
+  html += `${d.confidencial}    <span class="right">${d.sistema}</span>\n`;
+  html += "-".repeat(116) + "\n";
+  html += `AG: ${d.ag}        PRODUTO: ${d.produto}        CONTA: ${d.conta}    <span class="right">PAG: ${d.pag}</span>\n`;
+  html += `NOME: ${d.nome}    <span class="right">CPF/CNPJ: ${d.cpf_cnpj}</span>\n\n`;
+  html += `ENDEREÇO: ${d.endereco}\n`;
+  html += `CEP: ${d.cep}    BAIRRO: ${d.bairro}\n`;
+  html += `UF: ${d.uf}    CIDADE: ${d.cidade}\n`;
+  html += `SITUAÇÃO: <span class="st verde">${d.situacao}</span>   SITUAÇÃO CADASTRAL: <span class="st vermelho">${d.situacao_cadastral}</span>\n`;
+  html += `USUARIO: ${d.usuario}\nCELULAR: ${d.celular}\nEMAIL: ${d.email}\n`;
+  html += "-".repeat(116) + "\n\n";
   html += `N   CARGO             NOME                               CONTATO\n`;
   soc.forEach((s, i) => {
-    html += `${i + 1}   ${esc(pad(s.cargo, 17))}${esc(pad(s.nome, 36))}${esc(formatarTelefone(s.contato))}\n`;
+    html += `${i + 1}   ${s.cargo.padEnd(17)} ${s.nome.padEnd(35)} ${s.contato}\n`;
   });
-  html += `\nCONS EFETUADA\n`;
-  html += dash + "\n\n";
-  html += `${esc(d.fkeys)}\n`;
+  html += `\nCONS EFETUADA ${d.cons_efetuada}\n`;
+  html += "-".repeat(116) + "\n\n${d.fkeys}\n";
   $("preview").innerHTML = html;
 }
 
-function mostrarStatus(msg, tipo) {
-  const el = $("status");
-  el.textContent = msg;
-  el.className = "status " + (tipo || "ok");
-}
-
-function mostrarAvisoOffline(motivo) {
-  const el = $("aviso-offline");
-  if (!el) return;
-  el.style.display = "block";
-  if (motivo === "file") {
-    el.innerHTML = "<b>Esta aberto pelo ARQUIVO (file:///), nao pelo servidor.</b><br>"
-      + "Feche essa pagina, rode o <b>Abrir Site.bat</b> na pasta <b>gerente</b> "
-      + "e use o navegador que abrir em <b>http://127.0.0.1:8765</b>.";
-  }
-}
-
-async function pingServidor() {
-  try {
-    const r = await fetch(API + "/api/exemplo", { cache: "no-store" });
-    if (!r.ok) throw new Error("bad");
-    $("aviso-offline").style.display = "none";
-    return true;
-  } catch (_) {
-    mostrarAvisoOffline("offline");
-    return false;
-  }
-}
-
 async function gerar() {
-  salvarFichaAtual();
-  let payload;
-  if (veioDePuxar && fichas.length >= 1) {
-    payload = { fichas: fichas.map(f => ({ dados: f.dados, socios: f.socios })) };
-  } else {
-    payload = coletar();
-  }
-  payload.formato = ($("formato") && $("formato").value) || "pdf";
-  if (payload.formato === "png") {
-    payload.resolucao = ($("resolucao") && $("resolucao").value) || "1920x1080";
-  }
-  if (logoCustom) payload.logo = logoCustom;
-  const rotulo = payload.formato === "png" ? "PNG" : payload.formato === "txt" ? "TXT" : "PDF";
-  mostrarStatus("Gerando " + rotulo + "...", "ok");
-  let resp = null;
-  let ultimoErro = null;
-  // Tenta 3x (cobri reinicio momentaneo do servidor)
-  for (let tentativa = 0; tentativa < 3; tentativa++) {
-    try {
-      resp = await fetch(API + "/api/gerar", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      ultimoErro = null;
-      break;
-    } catch (e) {
-      ultimoErro = e;
-      await new Promise(r => setTimeout(r, 700));
-    }
-  }
-  if (!resp) {
-    if (ultimoErro && ultimoErro.message === "Failed to fetch") {
-      mostrarAvisoOffline("offline");
-      mostrarStatus("Sem conexao com o servidor! Rode o 'Abrir Site.bat' e tente de novo.", "err");
-    } else {
-      mostrarStatus("Erro: " + (ultimoErro ? ultimoErro.message : "desconhecido"), "err");
-    }
-    return;
-  }
+  const payload = coletar();
+  document.getElementById("status").style.display = "block";
+  document.getElementById("status").textContent = "Gerando PDF...";
   try {
-    if (!resp.ok) {
-      const j = await resp.json().catch(() => ({}));
-      throw new Error(j.erro || ("Falha HTTP " + resp.status));
-    }
+    const resp = await fetch(API + "/api/gerar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    if (!resp.ok) throw new Error("Erro ao gerar PDF");
     const blob = await resp.blob();
-    const cd = resp.headers.get("Content-Disposition") || "";
-    let nome = "bradesco_net_empresa." + rotulo.toLowerCase();
-    const m = /filename\*?=(?:UTF-8'')?"?([^";]+)/i.exec(cd);
-    if (m) { try { nome = decodeURIComponent(m[1]); } catch (_) { nome = m[1]; } }
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url; a.download = nome;
+    a.href = url; a.download = "bradesco_net_empresa.pdf";
     document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 4000);
-    const paginas = fichas.length || 1;
-    mostrarStatus(`${rotulo} gerado com sucesso (${paginas} pagina${paginas > 1 ? "s" : ""}): ${nome}`, "ok");
+    document.getElementById("status").textContent = "PDF gerado com sucesso!";
   } catch (e) {
-    mostrarStatus("Erro: " + e.message, "err");
-  }
-}
-
-async function carregarExemplo() {
-  try {
-    const resp = await fetch(API + "/api/exemplo", { cache: "no-store" });
-    preencher(await resp.json());
-  } catch (_) {
-    mostrarAvisoOffline("offline");
+    document.getElementById("status").className = "status err";
+    document.getElementById("status").textContent = "Erro: " + e.message;
   }
 }
 
 tabsInit();
-montarSelects();
-$("btn-add").addEventListener("click", () => {
-  socios.push({ cargo: "ADMINISTRADOR", nome: "", cpf: "", contato: "" });
-  selIdx = socios.length - 1;
-  renderSocios();
-  atualizarPreview();
-});
-$("btn-del").addEventListener("click", () => {
-  if (selIdx < 0) return;
-  socios.splice(selIdx, 1);
-  selIdx = -1;
-  renderSocios();
-  atualizarPreview();
-});
-$("btn-gerar").addEventListener("click", gerar);
-$("formato").addEventListener("change", () => {
-  const mostrar = $("formato").value === "png";
-  $("resolucao").style.display = mostrar ? "" : "none";
-  $("lbl-resolucao").style.display = mostrar ? "" : "none";
-});
-$("btn-reset").addEventListener("click", carregarExemplo);
-
-/* ============ Logo customizada ============ */
-let logoCustom = null;
-$("btn-trocar-logo").addEventListener("click", () => $("logo-file").click());
-$("logo-file").addEventListener("change", e => {
-  const arq = e.target.files && e.target.files[0];
-  if (!arq) return;
-  if (arq.size > 4 * 1024 * 1024) {
-    mostrarStatus("Logo muito grande (max 4 MB).", "err");
-    return;
-  }
-  const fr = new FileReader();
-  fr.onload = () => {
-    logoCustom = fr.result;
-    $("logo-preview").src = logoCustom;
-    $("logo-nome").textContent = arq.name;
-    $("btn-logo-padrao").style.display = "";
-    mostrarStatus("Logo trocada: " + arq.name + " (vale pra proxima geracao)", "ok");
-  };
-  fr.readAsDataURL(arq);
-  e.target.value = "";
-});
-$("btn-logo-padrao").addEventListener("click", () => {
-  logoCustom = null;
-  $("logo-preview").src = "brada.jpg";
-  $("logo-nome").textContent = "";
-  $("btn-logo-padrao").style.display = "none";
-  mostrarStatus("Voltou pra logo padrao (brada.jpg).", "ok");
-});
-$("btn-puxar").addEventListener("click", puxarFichas);
-$("btn-limpar-fichas").addEventListener("click", () => {
-  fichas = [];
-  idxFicha = 0;
-  $("ficha-texto").value = "";
-  $("ficha-status").style.display = "none";
-  renderFichasBar();
-  carregarExemplo();
-});
+renderSocios();
+atualizarPreview();
 document.querySelectorAll("input").forEach(i => i.addEventListener("input", atualizarPreview));
-if ($("cep")) {
-  $("cep").addEventListener("input", e => {
-    let v = e.target.value.replace(/\D/g, "").slice(0, 8);
-    if (v.length > 5) v = v.slice(0, 5) + "-" + v.slice(5);
-    e.target.value = v;
-    atualizarPreview();
-  });
-  $("cep").addEventListener("blur", puxarCep);
-  $("cep").addEventListener("change", puxarCep);
-}
-pingServidor();
-carregarExemplo();
+$("btn-gerar").addEventListener("click", gerar);
+$("btn-add").addEventListener("click", () => { socios.push({ cargo: "ADMINISTRADOR", nome: "", contato: "" }); renderSocios(); atualizarPreview(); });
+$("btn-del").addEventListener("click", () => { if (socios.length > 0) socios.pop(); renderSocios(); atualizarPreview(); });
 </script>
 </body>
 </html>
