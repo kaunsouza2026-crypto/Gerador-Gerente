@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gerador Gerente - Bradesco Net Empresa</title>
-<!-- Biblioteca jsPDF para gerar o PDF diretamente no navegador com a imagem correta -->
+<!-- Biblioteca jsPDF para gerar o PDF direto no navegador -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   :root {
@@ -286,7 +286,6 @@
 <script>
 let logoBase64 = null;
 
-// Converte a imagem brada.png em base64 automaticamente ao abrir a página
 document.addEventListener("DOMContentLoaded", () => {
   const ts = new Date().getTime();
   const imgUrl = "brada.png?v=" + ts;
@@ -376,7 +375,6 @@ function atualizarPreview() {
   $("preview").innerHTML = html;
 }
 
-// GERADOR DE PDF DIRETO NO NAVEGADOR USANDO jsPDF (Sem precisar de backend python)
 async function gerarPdfNavegador() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
@@ -384,15 +382,12 @@ async function gerarPdfNavegador() {
   const { dados: d, socios: soc } = coletar();
   const hora = d.hora || new Date().toTimeString().slice(0, 5);
 
-  // Fundo do cabeçalho azul escuro
   doc.setFillColor(16, 38, 64);
   doc.rect(0, 0, 297, 22, "F");
 
-  // Linha vermelha do cabeçalho
   doc.setFillColor(240, 25, 26);
   doc.rect(0, 22, 297, 1.5, "F");
 
-  // INSERE A LOGO REAL (brada.png) NO CABEÇALHO DO PDF
   if (logoBase64) {
     try {
       doc.addImage(logoBase64, "PNG", 10, 3, 16, 16);
@@ -401,13 +396,11 @@ async function gerarPdfNavegador() {
     }
   }
 
-  // Título do cabeçalho
   doc.setTextColor(255, 255, 255);
   doc.setFont("courier", "bold");
   doc.setFontSize(14);
   doc.text("Bradesco Net Empresa", 32, 14);
 
-  // Textos do documento
   doc.setTextColor(0, 0, 0);
   doc.setFont("courier", "normal");
   doc.setFontSize(10);
@@ -474,7 +467,6 @@ async function gerarPdfNavegador() {
   y += 8;
   doc.text(`${d.fkeys}`, 10, y);
 
-  // Descarrega o PDF gerado diretamente no navegador
   doc.save("bradesco_net_empresa.pdf");
 }
 
