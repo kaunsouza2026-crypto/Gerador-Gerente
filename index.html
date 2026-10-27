@@ -190,8 +190,8 @@
 <body>
 
 <header>
-  <!-- Adicionado um número aleatório (?v=...) na frente da imagem para o navegador NUNCA usar cache -->
-  <img class="logo-img" id="logo-header" src="brada.png" alt="logo">
+  <!-- Logo puxada diretamente do GitHub Pages com anti-cache dinâmico -->
+  <img class="logo-img" id="logo-header" src="https://kaunsouza2026-crypto.github.io/Gerador-Gerente/brada.png" alt="logo">
   <h1>Bradesco Net Empresa</h1>
   <span class="tag">#GERADOR GERENTE &nbsp;|&nbsp; PREENCHA E CLIQUE EM GERAR PDF</span>
 </header>
@@ -263,10 +263,10 @@
   </section>
 
   <div class="fgroup" style="margin:14px 0">
-    <div class="fg-title">Logo atual</div>
+    <div class="fg-title">Logo atual (GitHub)</div>
     <div class="btns" style="margin:0;align-items:center">
-      <img id="logo-preview" src="brada.png" alt="logo" style="width:44px;height:44px;border-radius:8px;object-fit:cover;border:1px solid var(--border2);background:#fff">
-      <span style="font-size:12px;color:var(--muted);font-family:Consolas,monospace">brada.png (atualizado sem cache)</span>
+      <img id="logo-preview" src="https://kaunsouza2026-crypto.github.io/Gerador-Gerente/brada.png" alt="logo" style="width:44px;height:44px;border-radius:8px;object-fit:cover;border:1px solid var(--border2);background:#fff">
+      <span style="font-size:12px;color:var(--muted);font-family:Consolas,monospace">Puxando direto do GitHub Pages (sem cache)</span>
     </div>
   </div>
 
@@ -283,13 +283,14 @@
 <footer>Gerador Gerente &mdash; site local</footer>
 
 <script>
-// Força o navegador a carregar a imagem nova ignorando totalmente qualquer cache
+// Adiciona timestamp automático para anular completamente o cache do navegador
 document.addEventListener("DOMContentLoaded", () => {
-  const timestamp = new Date().getTime();
+  const t = new Date().getTime();
+  const urlLogo = "https://kaunsouza2026-crypto.github.io/Gerador-Gerente/brada.png?v=" + t;
   const logoHeader = document.getElementById("logo-header");
   const logoPreview = document.getElementById("logo-preview");
-  if (logoHeader) logoHeader.src = "brada.png?v=" + timestamp;
-  if (logoPreview) logoPreview.src = "brada.png?v=" + timestamp;
+  if (logoHeader) logoHeader.src = urlLogo;
+  if (logoPreview) logoPreview.src = urlLogo;
 });
 
 const CAMPOS = [
@@ -333,7 +334,7 @@ function renderSocios() {
 function coletar() {
   const dados = {};
   CAMPOS.forEach(k => dados[k] = ($(k) ? $(k).value : "").trim());
-  return { dados, socios: socios.map(s => ({...s})), logo: "brada.png" };
+  return { dados, socios: socios.map(s => ({...s})), logo: "https://kaunsouza2026-crypto.github.io/Gerador-Gerente/brada.png" };
 }
 
 function atualizarPreview() {
