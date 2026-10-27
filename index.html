@@ -265,7 +265,7 @@
 <body>
 
 <header>
-  <img class="logo-img" src="brada.png" alt="logo">
+  <img class="logo-img" src="brada.jpg" alt="logo">
   <h1>Bradesco Net Empresa</h1>
   <span class="tag">#GERADOR GERENTE &nbsp;|&nbsp; PREENCHA E CLIQUE EM GERAR PDF</span>
 </header>
@@ -408,11 +408,11 @@
   </section>
 
   <div class="fgroup" style="margin-bottom:14px">
-    <div class="fg-title">Logo do documento <span class="fg-sub">padrao: brada.png — troque se quiser</span></div>
+    <div class="fg-title">Logo do documento <span class="fg-sub">padrao: brada.jpg — troque se quiser</span></div>
     <div class="btns" style="margin:0;align-items:center">
-      <img id="logo-preview" src="brada.png" alt="logo" style="width:44px;height:44px;border-radius:8px;object-fit:cover;border:1px solid var(--border2);background:#fff">
+      <img id="logo-preview" src="brada.jpg" alt="logo" style="width:44px;height:44px;border-radius:8px;object-fit:cover;border:1px solid var(--border2);background:#fff">
       <button class="ghost" id="btn-trocar-logo">Trocar logo</button>
-      <button class="ghost" id="btn-logo-padrao" style="display:none">Usar a padrão (brada.png)</button>
+      <button class="ghost" id="btn-logo-padrao" style="display:none">Usar a padrão (brada.jpg)</button>
       <span id="logo-nome" style="font-size:12px;color:var(--muted);font-family:Consolas,monospace"></span>
       <input type="file" id="logo-file" accept="image/png,image/jpeg,image/webp" style="display:none">
     </div>
@@ -1005,10 +1005,10 @@ $("logo-file").addEventListener("change", e => {
 });
 $("btn-logo-padrao").addEventListener("click", () => {
   logoCustom = null;
-  $("logo-preview").src = "brada.png";
+  $("logo-preview").src = "brada.jpg";
   $("logo-nome").textContent = "";
   $("btn-logo-padrao").style.display = "none";
-  mostrarStatus("Voltou pra logo padrao (brada.png).", "ok");
+  mostrarStatus("Voltou pra logo padrao (brada.jpg).", "ok");
 });
 $("btn-puxar").addEventListener("click", puxarFichas);
 $("btn-limpar-fichas").addEventListener("click", () => {
