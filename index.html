@@ -406,11 +406,19 @@
   </section>
 
   <div class="fgroup" style="margin-bottom:14px">
-    <div class="fg-title">Logo do documento <span class="fg-sub">padrão: brada.png</span></div>
+    <div class="fg-title">Logo do documento <span class="fg-sub" id="logo-sub">padrão: brada.png</span></div>
     <div class="btns" style="margin:0;align-items:center">
-      <img id="logo-preview" src="brada.png" alt="logo" style="width:44px;height:44px;border-radius:8px;object-fit:cover;border:1px solid var(--border2);background:#fff">
-      <span id="logo-nome" style="font-size:12px;color:var(--muted);font-family:Consolas,monospace">brada.png (forçado do projeto)</span>
+      <img id="logo-preview" src="brada.png" alt="logo" style="width:52px;height:52px;border-radius:8px;object-fit:cover;border:1px solid var(--border2);background:#fff">
+      <span id="logo-nome" style="font-size:12px;color:var(--muted);font-family:Consolas,monospace;max-width:340px;word-break:break-all">brada.png</span>
+      <span style="flex:1"></span>
+      <button class="small" id="btn-trocar-logo">Trocar imagem...</button>
+      <button class="small ghost" id="btn-logo-padrao">Voltar para brada.png</button>
+      <input type="file" id="logo-file" accept="image/*" style="display:none">
     </div>
+    <p class="hint" style="margin:12px 0 0;font-size:12px">
+      A imagem escolhida entra no <b>PDF</b>, na <b>imagem PNG</b> e no cabecalho do site,
+      e fica salva para as proximas vezes.
+    </p>
   </div>
 
   <div class="btns">
@@ -458,12 +466,66 @@ const LOGO_B64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABOYAAATmCAIAAAAK
 const LOGO_SRC = LOGO_B64.indexOf("data:image") === 0 ? LOGO_B64 : "brada.png";
 
 let logoImg = null;
-const logoPr = new Promise(res => {
-  const i = new Image();
-  i.onload = () => { logoImg = i; res(i); };
-  i.onerror = () => res(null);
-  i.src = LOGO_SRC;
-});
+let logoNome = "brada.png";
+let logoPr = null;
+
+function carregarLogo(src, nome) {
+  logoNome = nome || "logo";
+  logoPr = new Promise(res => {
+    const i = new Image();
+    i.onload = () => { logoImg = i; res(i); };
+    i.onerror = () => { logoImg = null; res(null); };
+    i.src = src;
+  });
+  return logoPr;
+}
+
+function aplicarLogoNaTela(src) {
+  ["logo-header", "logo-preview"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.src = src;
+  });
+  const n = document.getElementById("logo-nome");
+  if (n) n.textContent = logoNome;
+  const s = document.getElementById("logo-sub");
+  if (s) s.textContent = logoNome === "brada.png" ? "padrão: brada.png" : "imagem propria";
+}
+
+// reduz a imagem escolhida para nao deixar o arquivo gigante
+function otimizarImagem(src) {
+  return new Promise(res => {
+    const i = new Image();
+    i.onload = () => {
+      const MAX = 640;
+      const iw = i.naturalWidth || i.width, ih = i.naturalHeight || i.height;
+      if (!iw || !ih || (iw <= MAX && ih <= MAX)) { res(src); return; }
+      const r = Math.min(MAX / iw, MAX / ih);
+      const w = Math.max(1, Math.round(iw * r)), h = Math.max(1, Math.round(ih * r));
+      const cv = document.createElement("canvas");
+      cv.width = w; cv.height = h;
+      cv.getContext("2d").drawImage(i, 0, 0, w, h);
+      try { res(cv.toDataURL("image/png")); } catch (_) { res(src); }
+    };
+    i.onerror = () => res(src);
+    i.src = src;
+  });
+}
+
+function iniciarLogo() {
+  let salva = null, nomeSalvo = null;
+  try {
+    salva = localStorage.getItem("gerente_logo");
+    nomeSalvo = localStorage.getItem("gerente_logo_nome");
+  } catch (_) {}
+  if (salva && salva.indexOf("data:image") === 0) {
+    carregarLogo(salva, nomeSalvo || "imagem propria");
+    aplicarLogoNaTela(salva);
+  } else {
+    carregarLogo(LOGO_SRC, "brada.png");
+    aplicarLogoNaTela(LOGO_SRC);
+  }
+}
+iniciarLogo();
 
 const CAMPOS = [
   "matricula","hora","ag","produto","conta","pag","nome","cpf_cnpj","endereco","cep",
@@ -918,8 +980,16 @@ function renderPagina(ctx, baseY, W, H, esc, d, fs) {
   ctx.fillRect(0, y0, W, redTop - y0);
   if (logoImg) {
     const ls = Math.max(8, Math.round(44 * esc));
-    try { ctx.drawImage(logoImg, Math.round(10 * esc), y0 + Math.round(18 * esc), ls, ls); }
-    catch (_) { desenharLogoFallback(ctx, esc, y0); }
+    try {
+      const iw = logoImg.naturalWidth || logoImg.width || ls;
+      const ih = logoImg.naturalHeight || logoImg.height || ls;
+      const r = Math.min(ls / iw, ls / ih);
+      const dw = Math.max(1, Math.round(iw * r));
+      const dh = Math.max(1, Math.round(ih * r));
+      const dx = Math.round(10 * esc) + Math.round((ls - dw) / 2);
+      const dy = y0 + Math.round(18 * esc) + Math.round((ls - dh) / 2);
+      ctx.drawImage(logoImg, dx, dy, dw, dh);
+    } catch (_) { desenharLogoFallback(ctx, esc, y0); }
   } else {
     desenharLogoFallback(ctx, esc, y0);
   }
@@ -1183,7 +1253,7 @@ async function gerar() {
   const rotulo = formato === "png" ? "PNG" : formato === "txt" ? "TXT" : "PDF";
   mostrarStatus("Gerando " + rotulo + "...", "ok");
 
-  await logoPr;
+  if (logoPr) await logoPr;
 
   try {
     let blob, ext;
@@ -1244,6 +1314,44 @@ $("btn-limpar-fichas").addEventListener("click", () => {
   $("ficha-status").style.display = "none";
   renderFichasBar();
   carregarExemplo();
+});
+$("btn-trocar-logo").addEventListener("click", () => $("logo-file").click());
+$("logo-file").addEventListener("change", e => {
+  const f = e.target.files && e.target.files[0];
+  e.target.value = "";
+  if (!f) return;
+  if (f.type && f.type.indexOf("image/") !== 0) {
+    mostrarStatus("Escolha um arquivo de imagem (PNG, JPG, WEBP...).", "err");
+    return;
+  }
+  const fr = new FileReader();
+  fr.onload = async () => {
+    const bruto = String(fr.result);
+    if (bruto.indexOf("data:image") !== 0) {
+      mostrarStatus("Escolha um arquivo de imagem valido.", "err");
+      return;
+    }
+    const otimo = await otimizarImagem(bruto);
+    const nome = f.name + "  (" + Math.max(1, Math.round(f.size / 1024)) + " KB)";
+    await carregarLogo(otimo, nome);
+    aplicarLogoNaTela(otimo);
+    try {
+      localStorage.setItem("gerente_logo", otimo);
+      localStorage.setItem("gerente_logo_nome", nome);
+    } catch (_) {}
+    mostrarStatus("Logo trocada: " + nome + "\nJa vale para o PDF e para a imagem PNG.", "ok");
+  };
+  fr.onerror = () => mostrarStatus("Nao consegui ler essa imagem.", "err");
+  fr.readAsDataURL(f);
+});
+$("btn-logo-padrao").addEventListener("click", async () => {
+  await carregarLogo(LOGO_SRC, "brada.png");
+  aplicarLogoNaTela(LOGO_SRC);
+  try {
+    localStorage.removeItem("gerente_logo");
+    localStorage.removeItem("gerente_logo_nome");
+  } catch (_) {}
+  mostrarStatus("Logo padrao (brada.png) restaurada.", "ok");
 });
 document.querySelectorAll("input").forEach(i => i.addEventListener("input", atualizarPreview));
 document.querySelectorAll("select").forEach(s => s.addEventListener("change", atualizarPreview));
