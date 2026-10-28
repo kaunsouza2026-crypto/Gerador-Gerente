@@ -283,9 +283,10 @@
   <!-- ============ FICHAS ============ -->
   <section class="card active" id="tab-fichas">
     <p class="hint">
-      Cole aqui o texto de <b>1, 2 ou 3 fichas</b> (pode colar todas de uma vez).<br>
-      Ele detecta os formatos e puxa automaticamente: agencia/conta, CNPJ, razao social,
-      usuario, telefone, e-mail e socios. Depois e so ajustar o resto na aba Dados.
+      Cole aqui o texto das fichas — <b>pode colar todas de uma vez</b> (1, 5, 20...).<br>
+      Detecta o <b>formato antigo</b> e o <b>formato novo com emojis</b> (Agência/Conta, CNPJ,
+      Empresa, Usuário, Telefone GOV, E-mail, Cidade/UF, Sócios) e puxa tudo sozinho.
+      Depois e so ajustar o resto na aba Dados.
     </p>
     <div class="dropzone">
       <div class="dz-head">
@@ -660,7 +661,14 @@ function abrirTab(nome) {
 }
 
 function normLabel(s) {
-  return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase();
+  // tira acento, emoji e simbolo (mantem : / - . @) para casa rotulo com a linha
+  return String(s ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^0-9A-Za-z@.:/\-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toUpperCase();
 }
 
 function extrairValor(texto, rotulos) {
@@ -708,23 +716,62 @@ function parserFicha(texto) {
     data_atualizacao: "****", cons_efetuada: "_",
     fkeys: DEFAULTS.fkeys
   };
+
+  // formato novo: "Cidade/UF: ARACAJU/SE"
+  const cidUf = extrairValor(texto, ["CIDADE/UF", "CIDADE UF"]);
+  if (cidUf) {
+    const partes = cidUf.split("/");
+    if (partes.length >= 2) {
+      if (partes[0].trim()) dados.cidade = partes[0].trim();
+      const u = (partes[1] || "").trim().split(/\s+/)[0];
+      if (u) dados.uf = u;
+    }
+  }
+
+  // CEP no fim da linha "Endereco da agencia: ..., CEP 49010-120"
+  const mCep = texto.match(/\bCEP[:\s]*(\d{5})-?(\d{3})\b/i);
+  if (mCep) dados.cep = mCep[1] + "-" + mCep[2];
+
+  // e-mail vazio no formato novo vem como "na"
+  if (/^(na|n\/a|none|sem|indisponivel)$/i.test(dados.email)) dados.email = "";
+
+  // a ficha preenche SO a aba Dados Principais - socios fica vazio
   return { dados, socios: [] };
 }
 
 function separarFichas(texto) {
   const linhas = texto.split(/\r?\n/);
-  const partes = [];
+  const ehAgConta = l => /^AG[ÊE]NCIA\s*\/\s*CONTA\s*:/.test(normLabel(l).trim());
+  const ehEmpresa = l => /^EMPRESA\s*:/.test(normLabel(l).trim());
+
+  // 1) corta nas linhas de Agencia/Conta (cada ficha comeca ali)
+  const grupos = [];
   let atual = [];
   for (const linha of linhas) {
-    const nl = normLabel(linha).trim();
-    if (/^AG[ÊE]NCIA\s*\/\s*CONTA\s*:/.test(nl) || /^EMPRESA\s*:/.test(nl)) {
-      if (atual.length) partes.push(atual.join("\n"));
+    if (ehAgConta(linha)) {
+      if (atual.length) grupos.push(atual);
       atual = [];
     }
     atual.push(linha);
   }
-  if (atual.length) partes.push(atual.join("\n"));
-  return partes.map(p => p.trim()).filter(p => p.length > 10);
+  if (atual.length) grupos.push(atual);
+
+  // 2) formato antigo: pode vir varias fichas seguidas so com "Empresa:"
+  const partes = [];
+  for (const g of grupos) {
+    const nEmp = g.filter(ehEmpresa).length;
+    if (nEmp <= 1) { partes.push(g); continue; }
+    let cur = [];
+    for (const linha of g) {
+      if (ehEmpresa(linha) && cur.length) { partes.push(cur); cur = []; }
+      cur.push(linha);
+    }
+    if (cur.length) partes.push(cur);
+  }
+
+  return partes
+    .map(p => p.join("\n").trim())
+    .filter(p => p.length > 10 && /CNPJ|EMPRESA|AG[ÊE]NCIA|CONTA|RAZ[ÃA]O/.test(normLabel(p)));
 }
 
 function puxarFichas() {
@@ -799,6 +846,9 @@ function carregarFichaNaTela(i) {
   selIdx = -1;
   renderSocios();
   atualizarPreview();
+  // CEP vindo da ficha: completa endereco/bairro/cidade/UF pela internet
+  const cep8 = ($("cep") ? $("cep").value : "").replace(/\D/g, "");
+  if (cep8.length === 8) puxarCep();
 }
 
 function salvarFichaAtual() {
