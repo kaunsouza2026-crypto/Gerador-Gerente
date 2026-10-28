@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Gerador Gerente - bombinha2b</title>
+<title>Gerador Gerente - Bradesco Net Empresa</title>
 <style>
   :root {
     --bg: #0b0b0e;
@@ -268,7 +268,7 @@
 <header>
   <!-- Puxa a logo exata do arquivo brada.png com anti-cache dinâmico -->
   <img class="logo-img" id="logo-header" src="brada.png" alt="logo">
-  <h1>bombinha2b</h1>
+  <h1>Bradesco Net Empresa</h1>
   <span class="tag">#GERADOR GERENTE &nbsp;|&nbsp; PREENCHA E CLIQUE EM GERAR PDF</span>
 </header>
 
@@ -1199,7 +1199,7 @@ async function gerar() {
       ext = "pdf";
     }
     if (!blob) throw new Error("falha ao montar arquivo");
-    baixar(blob, "bombinha3b." + ext);
+    baixar(blob, "bradesco_net_empresa." + ext);
     mostrarStatus(`${rotulo} gerado com sucesso! (sem servidor)`, "ok");
   } catch (e) {
     mostrarStatus("Erro ao gerar documento: " + (e && e.message ? e.message : e), "err");
